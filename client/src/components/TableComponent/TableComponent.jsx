@@ -24,6 +24,7 @@ const TableComponent = (props) => {
     setSearchValue(e.target.value);
   };
   const [filterCat,setFilterCat]=useState([])
+  const [filterBook,setFilterBook]=useState([])
   useEffect(() => {
     if (category) {
       setFilterCat(
@@ -32,7 +33,14 @@ const TableComponent = (props) => {
         )
       );
     }
-  }, [category, searchValue, author]);
+    if(book){
+      setFilterBook(
+        book?.filter((book) =>
+          book?.bookName.toLowerCase().includes(searchValue.toLowerCase())
+        )
+      );
+    }
+  }, [category, searchValue, author,book]);
 
   return (
     <div>
@@ -101,6 +109,7 @@ const TableComponent = (props) => {
               book={book}
               categoryList={categoryList}
               authorList={authorList}
+              filterBook={filterBook}
             />
             // body học sinh
           ) : student ? (
