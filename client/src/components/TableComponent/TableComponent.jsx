@@ -13,6 +13,7 @@ const TableComponent = (props) => {
     author,
     book,
     refetch,
+    refetchBook,
     student,
     order,
     categoryList,
@@ -106,7 +107,7 @@ const TableComponent = (props) => {
             <ManageStudentComponent refetch={refetch} student={student} />
             // body đơn hàng
           ) : order ? (
-            <ManageOrderComponent refetch={refetch} order={order} />
+            <ManageOrderComponent refetchBook={refetchBook} refetch={refetch} order={order} />
           ) : null}
         </MDBTable>
       </div>

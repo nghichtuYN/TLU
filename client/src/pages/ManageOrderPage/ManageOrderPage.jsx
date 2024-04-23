@@ -22,6 +22,8 @@ import PaginationComponent from "../../components/PaginationComponent/Pagination
 import { addOrder, getAllOrders } from "../../services/OrderService";
 import { getAllBooks } from "../../services/BookService";
 import { getAllStudents } from "../../services/StudentService";
+import { useDispatch } from "react-redux";
+import { updateBook } from "../../redux/Slice/BookSlice";
 const ManageOrderPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -35,6 +37,7 @@ const ManageOrderPage = () => {
   const [borrowDate, setBorrowDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const dispatch = useDispatch()
   // eslint-disable-next-line no-unused-vars
   const [returnDate, setReturnDate] = useState(Date);
   const [studentExist, setStudentExist] = useState(true);
@@ -42,14 +45,16 @@ const ManageOrderPage = () => {
     const res = await getAllOrders(limit, page - 1);
     return res.data;
   };
-  const { data: order, refetch } = useQueryHook(["order", page], getAllOrder);
+  const { data: order, refetch:refetchOrder } = useQueryHook(["order", page], getAllOrder);
   const getAllBook = async () => {
     const res = await getAllBooks();
+    dispatch(updateBook({book:res.data}))
     return res.data;
   };
-  const { data: book } = useQueryHook(["book"], getAllBook);
+  const { data: book,refetch: refetchBook } = useQueryHook(["book"], getAllBook);
   const getAllStudent = async () => {
     const res = await getAllStudents();
+
     return res.data;
   };
   const { data: student } = useQueryHook(["student"], getAllStudent);
@@ -96,7 +101,8 @@ const ManageOrderPage = () => {
   };
 
   const onSuccessFn = (data, mes) => {
-    refetch();
+    refetchOrder();
+    refetchBook()
     success(mes);
   };
   const onErrorFn = (data, mes) => {
@@ -141,7 +147,7 @@ const ManageOrderPage = () => {
           </Button>
         </div>
         <div className="d-flex flex-column">
-          <TableComponent order={order?.data} refetch={refetch} />
+          <TableComponent order={order?.data} refetch={refetchOrder} refetchBook={refetchBook} />
           <div className="d-flex justify-content-end">
             <PaginationComponent
               isOrder={true}

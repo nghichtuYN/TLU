@@ -9,7 +9,7 @@ import { getDetaislBook } from "../../services/BookService";
 const ManageOrderComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
-  const { order, refetch } = props;
+  const { order, refetch,refetchBook } = props;
   const [detailStudent, setDetailStudent] = useState([]);
   const [orderId, setOrderId] = useState("");
   const [orderItems, setOrderItems] = useState([]);
@@ -81,7 +81,7 @@ const ManageOrderComponent = (props) => {
                 ? order?.ISBNNumbers.split(",")
                 : "không có gì";
               return (
-                <tr key={order?._id}>
+                <tr key={order?.id}>
                   <td>
                     <div className="d-flex align-items-center">
                       <div className="ms-3">
@@ -157,6 +157,7 @@ const ManageOrderComponent = (props) => {
       </MDBTableBody>
       {/* Modal */}
       <ModalComponent
+      refetchBook={refetchBook}
         status={status}
         setStatus={setStatus}
         setOrderItems={setOrderItems}

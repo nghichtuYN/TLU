@@ -10,7 +10,6 @@ import {
   MDBModalBody,
   MDBModalFooter,
   MDBInput,
-  // MDBFile,
   MDBRadio,
 } from "mdb-react-ui-kit";
 import PaginationComponent from "../../components/PaginationComponent/PaginationComponent";
@@ -22,6 +21,8 @@ import {
   success,
 } from "../../components/MessageComponent/MessageComponent";
 import { useNavigate } from "react-router-dom";
+import { updateCategory } from "../../redux/Slice/CategorySlice";
+import { useDispatch } from "react-redux";
 
 const ManageCategory = () => {
   const location = useLocation();
@@ -33,9 +34,10 @@ const ManageCategory = () => {
   const [status, setStatus] = useState("");
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(!basicModal);
-
+  const dispatch = useDispatch();
   const getAllCategory = async () => {
     const res = await getAllCategories(limit, page - 1);
+    dispatch(updateCategory({ category: res.data }));
     return res.data;
   };
   const { data: category, refetch } = useQueryHook(
@@ -47,8 +49,8 @@ const ManageCategory = () => {
       navigate(
         `/manage-category?pages=${Math.max(page - 1, 1)}&limits=${limit}`
       );
+      console.log("UseEffect");
     }
-    console.log("UseEffect");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, page]);
   const onSuccessFn = (data, mes) => {
@@ -84,10 +86,10 @@ const ManageCategory = () => {
           <Button onClick={toggleOpen}>Thêm Danh mục</Button>
         </div>
         <div className="d-flex flex-column">
-          <TableComponent  category={category?.data} refetch={refetch} />
+          <TableComponent category={category?.data} refetch={refetch} />
           <div className="d-flex justify-content-end">
             <PaginationComponent
-            isCategory={true}
+              isCategory={true}
               totalPage={category?.totalPage}
               pageCurrent={category?.pageCurrent}
               limit={limit}
@@ -96,9 +98,12 @@ const ManageCategory = () => {
         </div>
       </div>
       <div>
-        <MDBModal open={basicModal} setOpen={setBasicModal}
-            staticBackdrop={true}
-            tabIndex="-1">
+        <MDBModal
+          open={basicModal}
+          setOpen={setBasicModal}
+          staticBackdrop={true}
+          tabIndex="-1"
+        >
           <MDBModalDialog>
             <MDBModalContent>
               <MDBModalHeader>

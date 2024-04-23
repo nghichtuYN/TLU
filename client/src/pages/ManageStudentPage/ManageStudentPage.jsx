@@ -21,6 +21,8 @@ import { Button } from "react-bootstrap";
 import TableComponent from "../../components/TableComponent/TableComponent";
 import PaginationComponent from "../../components/PaginationComponent/PaginationComponent";
 import { addStudent, getAllStudents } from "../../services/StudentService";
+import { useDispatch } from "react-redux";
+import { updateStudent } from "../../redux/Slice/StudentSlice";
 
 const ManageStudentPage = () => {
   const location = useLocation();
@@ -35,22 +37,23 @@ const ManageStudentPage = () => {
   const [status, setStatus] = useState(0);
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(!basicModal);
+  const dispatch=useDispatch()
   const getAllStudent = async () => {
     const res = await getAllStudents(limit, page - 1);
+    dispatch(updateStudent({ student: res.data }));
     return res.data;
   };
   const { data: student, refetch } = useQueryHook(
     ["student", page],
     getAllStudent
   );
-  console.log(student);
   useEffect(() => {
     if (student?.data.length === 0) {
       navigate(
         `/manage-student?pages=${Math.max(page - 1, 1)}&limits=${limit}`
       );
+      console.log("UseEffect");
     }
-    console.log("UseEffect");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [student, page]);
   const onSuccessFn = (data, mes) => {

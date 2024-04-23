@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
-    totalBook: 0
+    book:[]
 };
 
 export const bookSlice = createSlice({
@@ -9,12 +9,12 @@ export const bookSlice = createSlice({
   reducers: {
     updateBook: (state, action) => {
       const {
-        totalBook=0
+        book=[]
       } = action.payload;
-      state.totalBook=totalBook
+      state.book=book
     },
     resetBook: (state) => {
-      state.totalBook="";
+      state.book=[];
     },
   },
 });

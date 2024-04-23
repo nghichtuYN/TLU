@@ -66,11 +66,16 @@ const ModalComponent = (props) => {
     orderItems,
     borrowDate,
     returnDate,
+    refetchBook,
     setOrderItems,
     order,
   } = props;
   const onSuccessFn = (data, mes) => {
     refetch();
+    if(order){
+      console.log("Running")
+      refetchBook()
+    }
     success(mes);
   };
   const onErrorfn = (data, mes) => {
@@ -91,7 +96,6 @@ const ModalComponent = (props) => {
       return updateOrder(id, rest);
     }
   };
-console.log('Modal  orderItems',status)
 
   const mutationUpdate = useMutationHook(
     updateRow,
@@ -510,6 +514,7 @@ console.log('Modal  orderItems',status)
                 onClick={() => {
                   handleUpdate();
                 }}
+                disabled={status===undefined ? true : status==='true' ? false : true}
               >
                 Save changes
               </Button>

@@ -20,6 +20,8 @@ import {
 import { Button } from "react-bootstrap";
 import TableComponent from "../../components/TableComponent/TableComponent";
 import PaginationComponent from "../../components/PaginationComponent/PaginationComponent";
+import { updateAuthor } from "../../redux/Slice/AuthorSlice";
+import { useDispatch } from "react-redux";
 
 const ManageAuthorPage = () => {
   const location = useLocation();
@@ -30,20 +32,22 @@ const ManageAuthorPage = () => {
   const [authorName, setAuthorName] = useState("");
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(!basicModal);
+  const dispatch = useDispatch();
+
   const getAllAuthors = async () => {
     const res = await getAllAuthor(limit, page - 1);
+    dispatch(updateAuthor({ author: res.data }));
     return res.data;
   };
   const { data: author, refetch } = useQueryHook(
     ["author", page],
     getAllAuthors
   );
-  console.log(author);
   useEffect(() => {
     if (author?.data.length === 0) {
       navigate(`/manage-author?pages=${Math.max(page - 1, 1)}&limits=${limit}`);
+      console.log("UseEffect");
     }
-    console.log("UseEffect");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [author, page]);
   const onSuccessFn = (data, mes) => {
@@ -65,6 +69,7 @@ const ManageAuthorPage = () => {
       return alert(`Vui lòng nhập đủ thông tin`);
     }
     muationAdd.mutate({ authorName });
+    console.log('author',author)
     toggleOpen();
   };
   return (
