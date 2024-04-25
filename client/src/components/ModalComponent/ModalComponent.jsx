@@ -20,7 +20,7 @@ import { updateCategory } from "../../services/CategoryService";
 import { updateAuthor } from "../../services/AuthorService";
 import { updateBook } from "../../services/BookService";
 import { updateStudent } from "../../services/StudentService";
-import { updateOrder,  } from "../../services/OrderService";
+import { updateOrder } from "../../services/OrderService";
 
 const ModalComponent = (props) => {
   const {
@@ -72,9 +72,9 @@ const ModalComponent = (props) => {
   } = props;
   const onSuccessFn = (data, mes) => {
     refetch();
-    if(order){
-      console.log("Running")
-      refetchBook()
+    if (order) {
+      console.log("Running");
+      refetchBook();
     }
     success(mes);
   };
@@ -129,13 +129,12 @@ const ModalComponent = (props) => {
     } else if (order) {
       mutationUpdate.mutate({
         id: orderId,
-        orderItems:orderItems,
+        orderItems: orderItems,
         returnStatus: status,
       });
     }
     toggleOpen();
     // clearSOrderItems();
-
   };
   const clearSOrderItems = () => {
     if (order) {
@@ -514,7 +513,15 @@ const ModalComponent = (props) => {
                 onClick={() => {
                   handleUpdate();
                 }}
-                disabled={status===undefined ? true : status==='true' ? false : true}
+                disabled={
+                  status === undefined && author
+                    ? false
+                    : status === undefined
+                    ? true
+                    : status === "true"
+                    ? false
+                    : true
+                }
               >
                 Save changes
               </Button>
