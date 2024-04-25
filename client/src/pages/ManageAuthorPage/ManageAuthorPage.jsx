@@ -20,8 +20,6 @@ import {
 import { Button } from "react-bootstrap";
 import TableComponent from "../../components/TableComponent/TableComponent";
 import PaginationComponent from "../../components/PaginationComponent/PaginationComponent";
-import { updateAuthor } from "../../redux/Slice/AuthorSlice";
-import { useDispatch } from "react-redux";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
 
 const ManageAuthorPage = () => {
@@ -34,15 +32,12 @@ const ManageAuthorPage = () => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(!basicModal);
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
-
   const getAllAuthors = () => {
     setIsLoading(true); // Hiển thị hiệu ứng loading
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         try {
           const res = await getAllAuthor(limit, page - 1);
-          dispatch(updateAuthor({ author: res.data }));
           setIsLoading(false);
           resolve(res.data);
         } catch (error) {
@@ -64,9 +59,11 @@ const ManageAuthorPage = () => {
   const onSuccessFn = (data, mes) => {
     refetch();
     success(mes);
+    setIsLoading(false);
   };
   const onErrorFn = (data, mes) => {
     error(mes);
+    setIsLoading(false);
   };
 
   const muationAdd = useMutationHook(
@@ -80,7 +77,6 @@ const ManageAuthorPage = () => {
       return alert(`Vui lòng nhập đủ thông tin`);
     }
     muationAdd.mutate({ authorName });
-    console.log("author", author);
     toggleOpen();
   };
   return (
@@ -97,7 +93,7 @@ const ManageAuthorPage = () => {
         </div>
         <div className="d-flex flex-column">
           {isLoading ? (
-            <SpinnerComponent/>
+            <SpinnerComponent />
           ) : (
             <div>
               <TableComponent author={author?.data} refetch={refetch} />

@@ -134,12 +134,11 @@ const ModalComponent = (props) => {
       });
     }
     toggleOpen();
-    // clearSOrderItems();
   };
   const clearSOrderItems = () => {
     if (order) {
       setOrderItems([]);
-      // setStatus("");
+      setStatus("");
     }
     // const clearStudent = () => {
     //   setStudent([]);
@@ -178,7 +177,7 @@ const ModalComponent = (props) => {
                 }}
               ></Button>
             </MDBModalHeader>
-            <MDBModalBody style={{}}>
+            <MDBModalBody>
               {category ? (
                 <div>
                   <label>Tên danh mục</label>
@@ -454,26 +453,12 @@ const ModalComponent = (props) => {
                                     </div>
                                   </td>
                                   <td>
-                                    <tr>
-                                      <td style={{ maxWidth: "300px" }}>
-                                        Tên sách: {items?.bookName}
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td style={{ maxWidth: "300px" }}>
-                                        ISBNNUmber: {items?.ISBNNumber}
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td style={{ maxWidth: "300px" }}>
-                                        Ngày mượn: {borrowDate}
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td style={{ maxWidth: "300px" }}>
-                                        Ngày trả: {returnDate}
-                                      </td>
-                                    </tr>
+                                    <div style={{ maxWidth: "300px" }}>
+                                      <p>Tên sách: {items?.bookName}</p>
+                                      <p>ISBNNUmber: {items?.ISBNNumber}</p>
+                                      <p>Ngày mượn: {borrowDate}</p>
+                                      <p>Ngày trả: {returnDate}</p>
+                                    </div>
                                   </td>
                                 </tr>
                               );
@@ -486,7 +471,7 @@ const ModalComponent = (props) => {
                                   value="true"
                                   onChange={(e) => setStatus(e.target.value)}
                                   label="Đã trả"
-                                  checked={order?.returnStatus}
+                                  checked={status}
                                   inline
                                 />
                               </td>
@@ -515,6 +500,10 @@ const ModalComponent = (props) => {
                 }}
                 disabled={
                   status === undefined && author
+                    ? false
+                    : status === undefined && book
+                    ? false
+                    : status && category
                     ? false
                     : status === undefined
                     ? true

@@ -43,6 +43,7 @@ const ManageOrderComponent = (props) => {
     if (order) {
       const selectedOrder = order?.find((order) => order?.id === id);
       if (selectedOrder) {
+        console.log(selectedOrder)
         setOrderId(selectedOrder?.id);
         const student= await getDetailStudent(selectedOrder?.UserId)
         setDetailStudent(student);
@@ -55,7 +56,7 @@ const ManageOrderComponent = (props) => {
           : "Chưa trả";
         setBorrowDate(formattedBorrowDate);
         setReturnDate(formattedReturnDate);
-        setStatus(order?.returnStatus);
+        setStatus(selectedOrder?.returnStatus);
       }
     }
   };
@@ -76,7 +77,7 @@ const ManageOrderComponent = (props) => {
               const bookArray = order?.BookNames
                 ? order?.BookNames.split(",")
                 : "không có gì";
-                console.log('bookArray',bookArray)
+                // console.log('bookArray',bookArray)
               const isbnArray = order?.ISBNNumbers
                 ? order?.ISBNNumbers.split(",")
                 : "không có gì";

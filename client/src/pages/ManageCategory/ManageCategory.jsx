@@ -21,8 +21,7 @@ import {
   success,
 } from "../../components/MessageComponent/MessageComponent";
 import { useNavigate } from "react-router-dom";
-import { updateCategory } from "../../redux/Slice/CategorySlice";
-import { useDispatch } from "react-redux";
+import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
 
 const ManageCategory = () => {
   const location = useLocation();
@@ -34,11 +33,21 @@ const ManageCategory = () => {
   const [status, setStatus] = useState("");
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(!basicModal);
-  const dispatch = useDispatch();
-  const getAllCategory = async () => {
-    const res = await getAllCategories(limit, page - 1);
-    dispatch(updateCategory({ category: res.data }));
-    return res.data;
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getAllCategory = () => {
+    setIsLoading(true)
+    return new Promise((resolve, reject) => {
+      setTimeout(async () => {
+        try {
+          const res = await getAllCategories(limit, page - 1);
+          setIsLoading(false);
+          resolve(res.data);
+        } catch (error) {
+          reject(error);
+        }
+      }, 500);
+    });
   };
   const { data: category, refetch } = useQueryHook(
     ["category", page],
@@ -86,15 +95,21 @@ const ManageCategory = () => {
           <Button onClick={toggleOpen}>Thêm Danh mục</Button>
         </div>
         <div className="d-flex flex-column">
-          <TableComponent category={category?.data} refetch={refetch} />
-          <div className="d-flex justify-content-end">
-            <PaginationComponent
-              isCategory={true}
-              totalPage={category?.totalPage}
-              pageCurrent={category?.pageCurrent}
-              limit={limit}
-            />
-          </div>
+          {isLoading ? (
+            <SpinnerComponent />
+          ) : (
+            <div>
+              <TableComponent category={category?.data} refetch={refetch} />
+              <div className="d-flex justify-content-end">
+                <PaginationComponent
+                  isCategory={true}
+                  totalPage={category?.totalPage}
+                  pageCurrent={category?.pageCurrent}
+                  limit={limit}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <div>

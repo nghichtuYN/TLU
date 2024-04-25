@@ -22,8 +22,7 @@ import PaginationComponent from "../../components/PaginationComponent/Pagination
 import { addBook, getAllBooks } from "../../services/BookService";
 import { getAllAuthor } from "../../services/AuthorService";
 import { getAllCategories } from "../../services/CategoryService";
-import { updateBook } from "../../redux/Slice/BookSlice";
-import { useDispatch } from "react-redux";
+import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
 
 const ManageBookPage = () => {
   const location = useLocation();
@@ -41,12 +40,20 @@ const ManageBookPage = () => {
   const [category_id, setCatId] = useState("");
   const [authorId, setAuthorId] = useState("");
   const [bookPrice, setBookPrice] = useState(0);
-  const dispatch = useDispatch();
-
+  const [isLoading, setIsLoading] = useState(false);
   const getAllBook = async () => {
-    const res = await getAllBooks(limit, page - 1);
-    dispatch(updateBook({ book: res.data }));
-    return res.data;
+    setIsLoading(true);
+    return new Promise((resolve, reject) => {
+      setTimeout(async () => {
+        try {
+          const res = await getAllBooks(limit, page - 1);
+          setIsLoading(false);
+          resolve(res.data);
+        } catch (error) {
+          reject(error);
+        }
+      }, 500);
+    });
   };
   const { data: book, refetch } = useQueryHook(["book", page], getAllBook);
   useEffect(() => {
@@ -75,9 +82,11 @@ const ManageBookPage = () => {
   );
   const onSuccessFn = (data, mes) => {
     refetch();
+    setIsLoading(false)
     success(mes);
   };
   const onErrorFn = (data, mes) => {
+    setIsLoading(false)
     error(mes);
   };
   const muationAdd = useMutationHook(
@@ -131,20 +140,26 @@ const ManageBookPage = () => {
           <Button onClick={toggleOpen}>Thêm Sách</Button>
         </div>
         <div className="d-flex flex-column">
-          <TableComponent
-            categoryList={categoryList?.data}
-            authorList={authorList?.data}
-            book={book?.data}
-            refetch={refetch}
-          />
-          <div className="d-flex justify-content-end">
-            <PaginationComponent
-              isBook={true}
-              totalPage={book?.totalPage}
-              pageCurrent={book?.pageCurrent}
-              limit={limit}
-            />
-          </div>
+          {isLoading ? (
+            <SpinnerComponent />
+          ) : (
+            <div>
+              <TableComponent
+                categoryList={categoryList?.data}
+                authorList={authorList?.data}
+                book={book?.data}
+                refetch={refetch}
+              />
+              <div className="d-flex justify-content-end">
+                <PaginationComponent
+                  isBook={true}
+                  totalPage={book?.totalPage}
+                  pageCurrent={book?.pageCurrent}
+                  limit={limit}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <div>

@@ -22,8 +22,7 @@ import PaginationComponent from "../../components/PaginationComponent/Pagination
 import { addOrder, getAllOrders } from "../../services/OrderService";
 import { getAllBooks } from "../../services/BookService";
 import { getAllStudents } from "../../services/StudentService";
-import { useDispatch } from "react-redux";
-import { updateBook } from "../../redux/Slice/BookSlice";
+import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
 const ManageOrderPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,21 +36,36 @@ const ManageOrderPage = () => {
   const [borrowDate, setBorrowDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [returnDate, setReturnDate] = useState(Date);
   const [studentExist, setStudentExist] = useState(true);
   const getAllOrder = async () => {
-    const res = await getAllOrders(limit, page - 1);
-    return res.data;
+    setIsLoading(true);
+    return new Promise((resolve, reject) => {
+      setTimeout(async () => {
+        try {
+          const res = await getAllOrders(limit, page - 1);
+          setIsLoading(false);
+          resolve(res.data);
+        } catch (error) {
+          reject(error);
+        }
+      }, 500);
+    });
   };
-  const { data: order, refetch:refetchOrder } = useQueryHook(["order", page], getAllOrder);
+  const { data: order, refetch: refetchOrder } = useQueryHook(
+    ["order", page],
+    getAllOrder
+  );
   const getAllBook = async () => {
     const res = await getAllBooks();
-    dispatch(updateBook({book:res.data}))
     return res.data;
   };
-  const { data: book,refetch: refetchBook } = useQueryHook(["book"], getAllBook);
+  const { data: book, refetch: refetchBook } = useQueryHook(
+    ["book"],
+    getAllBook
+  );
   const getAllStudent = async () => {
     const res = await getAllStudents();
 
@@ -62,7 +76,6 @@ const ManageOrderPage = () => {
     if (order?.data.length === 0) {
       navigate(`/manage-order?pages=${Math.max(page - 1, 1)}&limits=${limit}`);
     }
-    console.log("UseEffect");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [order, page, student, book]);
   const handleInputChange = async (e) => {
@@ -70,12 +83,11 @@ const ManageOrderPage = () => {
     const selectedBook = book?.data.find((book) => book?.bookName === bookName);
     if (selectedBook) {
       if (!orderItems.find((item) => item.id === selectedBook.id)) {
-        setOrderItems(prevOrderItems => [...prevOrderItems, selectedBook]);
+        setOrderItems((prevOrderItems) => [...prevOrderItems, selectedBook]);
       }
       e.target.value = "";
     }
   };
-  console.log('orderItems',orderItems)
   const onChangeStudent = (e) => {
     const studentCode = e.target.value;
     const selectedStudent = student?.data.find(
@@ -102,7 +114,7 @@ const ManageOrderPage = () => {
 
   const onSuccessFn = (data, mes) => {
     refetchOrder();
-    refetchBook()
+    refetchBook();
     success(mes);
   };
   const onErrorFn = (data, mes) => {
@@ -147,15 +159,25 @@ const ManageOrderPage = () => {
           </Button>
         </div>
         <div className="d-flex flex-column">
-          <TableComponent order={order?.data} refetch={refetchOrder} refetchBook={refetchBook} />
-          <div className="d-flex justify-content-end">
-            <PaginationComponent
-              isOrder={true}
-              totalPage={order?.totalPage}
-              pageCurrent={order?.pageCurrent}
-              limit={limit}
-            />
-          </div>
+          {isLoading ? (
+            <SpinnerComponent />
+          ) : (
+            <div>
+              <TableComponent
+                order={order?.data}
+                refetch={refetchOrder}
+                refetchBook={refetchBook}
+              />
+              <div className="d-flex justify-content-end">
+                <PaginationComponent
+                  isOrder={true}
+                  totalPage={order?.totalPage}
+                  pageCurrent={order?.pageCurrent}
+                  limit={limit}
+                />
+              </div>
+            </div>
+          )}
         </div>
         <div>
           <MDBModal

@@ -21,8 +21,7 @@ import { Button } from "react-bootstrap";
 import TableComponent from "../../components/TableComponent/TableComponent";
 import PaginationComponent from "../../components/PaginationComponent/PaginationComponent";
 import { addStudent, getAllStudents } from "../../services/StudentService";
-import { useDispatch } from "react-redux";
-import { updateStudent } from "../../redux/Slice/StudentSlice";
+import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
 
 const ManageStudentPage = () => {
   const location = useLocation();
@@ -37,11 +36,21 @@ const ManageStudentPage = () => {
   const [status, setStatus] = useState(0);
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(!basicModal);
-  const dispatch=useDispatch()
+  const [isLoading, setIsLoading] = useState(false);
+
   const getAllStudent = async () => {
-    const res = await getAllStudents(limit, page - 1);
-    dispatch(updateStudent({ student: res.data }));
-    return res.data;
+    setIsLoading(true);
+    return new Promise((resolve, reject) => {
+      setTimeout(async () => {
+        try {
+          const res = await getAllStudents(limit, page - 1);
+          setIsLoading(false);
+          resolve(res.data);
+        } catch (error) {
+          reject(error);
+        }
+      }, 500);
+    });
   };
   const { data: student, refetch } = useQueryHook(
     ["student", page],
@@ -89,20 +98,29 @@ const ManageStudentPage = () => {
           <Button onClick={toggleOpen}>Thêm độc giả</Button>
         </div>
         <div className="d-flex flex-column">
-          <TableComponent student={student?.data} refetch={refetch} />
-          <div className="d-flex justify-content-end">
-            <PaginationComponent
-              isStudent={true}
-              totalPage={student?.totalPage}
-              pageCurrent={student?.pageCurrent}
-              limit={limit}
-            />
-          </div>
+          {isLoading ? (
+            <SpinnerComponent />
+          ) : (
+            <div>
+              <TableComponent student={student?.data} refetch={refetch} />
+              <div className="d-flex justify-content-end">
+                <PaginationComponent
+                  isStudent={true}
+                  totalPage={student?.totalPage}
+                  pageCurrent={student?.pageCurrent}
+                  limit={limit}
+                />
+              </div>
+            </div>
+          )}
         </div>
         <div>
-          <MDBModal open={basicModal} setOpen={setBasicModal}
+          <MDBModal
+            open={basicModal}
+            setOpen={setBasicModal}
             staticBackdrop={true}
-            tabIndex="-1">
+            tabIndex="-1"
+          >
             <MDBModalDialog>
               <MDBModalContent>
                 <MDBModalHeader>
