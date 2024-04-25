@@ -9,7 +9,7 @@ import { deleteBook } from "../../services/BookService";
 export const ManageBookComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
-  const { book, refetch, categoryList, authorList,filterBook } = props;
+  const { book, refetch, categoryList, authorList, filterBook } = props;
   const [authorId, setAuthID] = useState(0);
   const [authorName, setAuthorName] = useState("");
   const [bookImage, setBookImage] = useState("");
@@ -19,6 +19,7 @@ export const ManageBookComponent = (props) => {
   const [bookPrice, setBookPrice] = useState(0);
   const [categoryName, setCategoryName] = useState("");
   const [category_id, setCatID] = useState(0);
+  const [isBorrowed, setIsBorrowed] = useState("");
   const handleOpen = (id) => {
     setBasicModal(true);
     if (book) {
@@ -33,6 +34,7 @@ export const ManageBookComponent = (props) => {
         setBookImage(selectedBook?.bookImage);
         setBookPrice(selectedBook?.bookPrice);
         setISBN_Number(selectedBook?.ISBNNumber);
+        setIsBorrowed(selectedBook?.isBorrowed.toString());
       }
     }
   };
@@ -56,7 +58,7 @@ export const ManageBookComponent = (props) => {
   const handleDelete = (id) => {
     mutationDelete.mutate(id);
   };
-  console.log('filterBook',filterBook)
+  console.log("filterBook", filterBook);
   return (
     <>
       <MDBTableBody>
@@ -81,10 +83,7 @@ export const ManageBookComponent = (props) => {
                   <td>
                     <div className="d-flex align-items-center">
                       <div className="ms-3">
-                        <p
-                          className="fw-bold mb-1"
-                          title={book?.categoryName}
-                        >
+                        <p className="fw-bold mb-1" title={book?.categoryName}>
                           {book?.categoryName}
                         </p>
                       </div>
@@ -93,10 +92,7 @@ export const ManageBookComponent = (props) => {
                   <td>
                     <div className="d-flex align-items-center">
                       <div className="ms-3">
-                        <p
-                          className="fw-bold mb-1"
-                          title={book?.authorName}
-                        >
+                        <p className="fw-bold mb-1" title={book?.authorName}>
                           {book?.authorName}
                         </p>
                       </div>
@@ -133,79 +129,74 @@ export const ManageBookComponent = (props) => {
               );
             })
           : filterBook?.map((book) => {
-            return (
-              <tr key={book?.id}>
-                <td>
-                  <div className=" align-items-center ">
-                    <img
-                      src={book?.bookImage}
-                      alt=""
-                      style={{ width: "60px", height: "60px" }}
-                    />
-                    <div className="ms-3">
-                      <p className="fw-bold mb-1" title={book?.bookName}>
-                        {book?.bookName}
-                      </p>
+              return (
+                <tr key={book?.id}>
+                  <td>
+                    <div className=" align-items-center ">
+                      <img
+                        src={book?.bookImage}
+                        alt=""
+                        style={{ width: "60px", height: "60px" }}
+                      />
+                      <div className="ms-3">
+                        <p className="fw-bold mb-1" title={book?.bookName}>
+                          {book?.bookName}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td>
-                  <div className="d-flex align-items-center">
-                    <div className="ms-3">
-                      <p
-                        className="fw-bold mb-1"
-                        title={book?.categoryName}
-                      >
-                        {book?.categoryName}
-                      </p>
+                  </td>
+                  <td>
+                    <div className="d-flex align-items-center">
+                      <div className="ms-3">
+                        <p className="fw-bold mb-1" title={book?.categoryName}>
+                          {book?.categoryName}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td>
-                  <div className="d-flex align-items-center">
-                    <div className="ms-3">
-                      <p
-                        className="fw-bold mb-1"
-                        title={book?.authorName}
-                      >
-                        {book?.authorName}
-                      </p>
+                  </td>
+                  <td>
+                    <div className="d-flex align-items-center">
+                      <div className="ms-3">
+                        <p className="fw-bold mb-1" title={book?.authorName}>
+                          {book?.authorName}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td>
-                  <div className="d-flex align-items-center ">
-                    {book?.ISBNNumber}
-                  </div>
-                </td>
-                <td>
-                  <div className="d-flex align-items-center ">
-                    {book?.bookPrice}
-                  </div>
-                </td>
-                <td>
-                  <Button
-                    variant="primary"
-                    rounded="true"
-                    onClick={() => handleOpen(book?.id)}
-                  >
-                    Cập nhật
-                  </Button>
-                  <Button
-                    style={{ marginLeft: "5px" }}
-                    variant="danger"
-                    rounded="true"
-                    onClick={() => handleDelete(book?.id)}
-                  >
-                    Xóa
-                  </Button>
-                </td>
-              </tr>
-            );
-          })}
+                  </td>
+                  <td>
+                    <div className="d-flex align-items-center ">
+                      {book?.ISBNNumber}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="d-flex align-items-center ">
+                      {book?.bookPrice}
+                    </div>
+                  </td>
+                  <td>
+                    <Button
+                      variant="primary"
+                      rounded="true"
+                      onClick={() => handleOpen(book?.id)}
+                    >
+                      Cập nhật
+                    </Button>
+                    <Button
+                      style={{ marginLeft: "5px" }}
+                      variant="danger"
+                      rounded="true"
+                      onClick={() => handleDelete(book?.id)}
+                    >
+                      Xóa
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })}
       </MDBTableBody>
       {/* Modal */}
       <ModalComponent
+        isBorrowed={isBorrowed}
         book={book}
         authorName={authorName}
         authorId={authorId}

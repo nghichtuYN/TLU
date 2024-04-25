@@ -48,6 +48,7 @@ const ModalComponent = (props) => {
     setBookName,
     bookID,
     bookPrice,
+    isBorrowed,
     setBookPrice,
     categoryList,
     authorList,
@@ -116,6 +117,7 @@ const ModalComponent = (props) => {
         ISBNNumber,
         category_id,
         authorId,
+        isBorrowed
       });
     } else if (student) {
       mutationUpdate.mutate({

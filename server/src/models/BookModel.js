@@ -74,9 +74,9 @@ const updateBook = (id, updatedata) => {
         ISBNNumber,
         bookImage,
         bookPrice,
-        isBorrowed
+        isBorrowed,
       } = updatedata;
-      console.log(updatedata)
+      console.log(updatedata);
       const pool = await connect();
       const sqlString = `UPDATE [book] SET bookName=@bookName,category_id=@category_id,authorId=@authorId,
       bookImage=@bookImage,ISBNNumber=@ISBNNumber,bookPrice=@bookPrice,updated_at=@updated_at,isBorrowed=@isBorrowed 
@@ -90,7 +90,11 @@ const updateBook = (id, updatedata) => {
         .input("bookImage", sql.NVarChar, bookImage)
         .input("bookPrice", sql.SmallInt, bookPrice)
         .input("id", sql.Int, id)
-        .input('isBorrowed',sql.Bit, isBorrowed === "false" ? 0 : 1)
+        .input(
+          "isBorrowed",
+          sql.Bit,
+          isBorrowed === "false" ? 0 : isBorrowed === "true" ? 1 : 0
+        )
         .input("updated_at", sql.DateTime, dateString)
         .query(sqlString);
       resolve(data);
