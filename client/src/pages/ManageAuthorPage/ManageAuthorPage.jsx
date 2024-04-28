@@ -21,6 +21,7 @@ import { Button } from "react-bootstrap";
 import TableComponent from "../../components/TableComponent/TableComponent";
 import PaginationComponent from "../../components/PaginationComponent/PaginationComponent";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
+import { SiComposer } from "react-icons/si";
 
 const ManageAuthorPage = () => {
   const location = useLocation();
@@ -85,9 +86,16 @@ const ManageAuthorPage = () => {
         className="d-flex flex-column"
         style={{ padding: "0 20px", gap: "25px" }}
       >
+        <div className="d-flex justify-content-start align-items-center">
+        <SiComposer style={{
+            fontSize: "20px",
+            margin: "10px",
+            fontWeight:'bold'
+          }} />
         <h1 style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}>
           Quản lý tác giả
         </h1>
+        </div>
         <div className="d-flex justify-content-end">
           <Button onClick={toggleOpen}>Thêm tác giả</Button>
         </div>

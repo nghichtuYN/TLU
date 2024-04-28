@@ -5,13 +5,13 @@ const OrderItems = require("../models/OrderItemsModel");
 const createOrder = (newOrder) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const {orderItems}=newOrder
+      const { orderItems } = newOrder;
       const createdOrder = await Order.createOrder(newOrder);
-      orderItems?.map(async(items)=>{
-        items.isBorrowed='true';
-        await Book.updateBook(items.id,items)
-        await OrderItems.createOrderItems(items.id,createdOrder)
-      })
+      orderItems?.map(async (items) => {
+        items.isBorrowed++;
+        await Book.updateBookInOrder(items.id, items);
+        await OrderItems.createOrderItems(items.id, createdOrder);
+      });
       if (createdOrder) {
         resolve({
           status: "OK",
@@ -28,7 +28,7 @@ const getAllOrder = (limit, page) => {
   return new Promise(async (resolve, reject) => {
     try {
       const totalOrder = await Order.totalOrder();
-      const allOrder = await Order.getAllOrder(limit,page)
+      const allOrder = await Order.getAllOrder(limit, page);
       resolve({
         status: "OK",
         message: "GET SUCCESS",
@@ -45,7 +45,7 @@ const getAllOrder = (limit, page) => {
 const updateOrder = (id, dataUpdate) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const checkOrder = await Order.getOrderByID(id)
+      const checkOrder = await Order.getOrderByID(id);
       if (checkOrder === undefined) {
         resolve({
           status: "ERR",

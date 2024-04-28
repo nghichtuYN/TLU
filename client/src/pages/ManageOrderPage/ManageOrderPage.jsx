@@ -23,6 +23,8 @@ import { addOrder, getAllOrders } from "../../services/OrderService";
 import { getAllBooks } from "../../services/BookService";
 import { getAllStudents } from "../../services/StudentService";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
+import { MdOutlineEditNote } from "react-icons/md";
+
 const ManageOrderPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -127,16 +129,21 @@ const ManageOrderPage = () => {
   );
   const handleAdd = async (event) => {
     event.preventDefault();
-    if (!stu || !orderItems || !borrowDate) {
+    console.log(stu, orderItems, borrowDate);
+    if (stu?.length===0 || orderItems?.length===0 || !borrowDate) {
+      console.log("running")
       return alert(`Vui lòng nhập đủ thông tin`);
+    } else {
+      console.log("running")
+
+      const student = stu.map((stu) => stu.id);
+      muationAdd.mutate({
+        orderItems: orderItems,
+        userId: student[0],
+        borrowsDate: borrowDate,
+      });
+      toggleOpen();
     }
-    const student = stu.map((stu) => stu.id);
-    muationAdd.mutate({
-      orderItems: orderItems,
-      userId: student[0],
-      borrowsDate: borrowDate,
-    });
-    toggleOpen();
   };
   return (
     <div>
@@ -144,9 +151,19 @@ const ManageOrderPage = () => {
         className="d-flex flex-column"
         style={{ padding: "0 20px", gap: "25px" }}
       >
-        <h1 style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}>
-          Quản lý mượn
-        </h1>
+        <div className="d-flex justify-content-start align-items-center">
+          <MdOutlineEditNote
+            style={{
+              fontSize: "30px",
+              margin: "10px",
+            }}
+          />
+          <h1
+            style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}
+          >
+            Quản lý mượn
+          </h1>
+        </div>
         <div className="d-flex justify-content-end">
           <Button
             onClick={() => {
@@ -213,6 +230,7 @@ const ManageOrderPage = () => {
                       id="studentCode"
                       type="text"
                       list="optionsStudent"
+                      required
                     />
                     <datalist id="optionsStudent">
                       {student?.data.map((stu) => (
@@ -251,6 +269,7 @@ const ManageOrderPage = () => {
                   </div>
                   <div>
                     <MDBInput
+                      required
                       type="text"
                       label={
                         <div>
@@ -263,7 +282,7 @@ const ManageOrderPage = () => {
                     />
                     <datalist id="optionsBook">
                       {book?.data.map((book) => {
-                        if (book?.isBorrowed === false) {
+                        if (book?.quantity > book.isBorrowed) {
                           return (
                             <option key={book?.id} value={book?.bookName} />
                           );
@@ -280,7 +299,7 @@ const ManageOrderPage = () => {
                           key={items?.id}
                         >
                           <img
-                            src={items?.bookImage}
+                            src={`http://localhost:3001/uploads/${items?.bookImage}`}
                             alt=""
                             style={{ width: "60px", height: "60px" }}
                           />
@@ -300,6 +319,7 @@ const ManageOrderPage = () => {
                     </div>
                   </div>
                   <MDBInput
+                    required
                     value={borrowDate}
                     label={
                       <div>
@@ -312,6 +332,7 @@ const ManageOrderPage = () => {
                     onChange={(e) => setBorrowDate(e.target.value)}
                   />
                   <MDBInput
+                    // required
                     onChange={(e) => setReturnDate(e.target.value)}
                     label={
                       <div>

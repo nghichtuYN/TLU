@@ -5,21 +5,23 @@ import ModalComponent from "../ModalComponent/ModalComponent";
 import { useMutationHook } from "../../Hook/useMutationHook";
 import { error, success } from "../MessageComponent/MessageComponent";
 import { deleteBook } from "../../services/BookService";
-
+import { FaRegEdit } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 export const ManageBookComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
   const { book, refetch, categoryList, authorList, filterBook } = props;
   const [authorId, setAuthID] = useState(0);
   const [authorName, setAuthorName] = useState("");
-  const [bookImage, setBookImage] = useState("");
+  const [bookImage, setBookImage] = useState();
   const [ISBNNumber, setISBN_Number] = useState("");
   const [bookName, setBookName] = useState("");
   const [bookID, setBookID] = useState("");
   const [bookPrice, setBookPrice] = useState(0);
   const [categoryName, setCategoryName] = useState("");
   const [category_id, setCatID] = useState(0);
-  const [isBorrowed, setIsBorrowed] = useState("");
+  const [quantity, setQuantity] = useState(0);
+  const [isBorrowed, setIsBorrowed] = useState(0);
   const handleOpen = (id) => {
     setBasicModal(true);
     if (book) {
@@ -33,8 +35,9 @@ export const ManageBookComponent = (props) => {
         setCategoryName(selectedBook?.categoryName);
         setBookImage(selectedBook?.bookImage);
         setBookPrice(selectedBook?.bookPrice);
+        setQuantity(selectedBook?.quantity);
         setISBN_Number(selectedBook?.ISBNNumber);
-        setIsBorrowed(selectedBook?.isBorrowed.toString());
+        setIsBorrowed(selectedBook?.isBorrowed);
       }
     }
   };
@@ -62,14 +65,14 @@ export const ManageBookComponent = (props) => {
   return (
     <>
       <MDBTableBody>
-        {!filterBook
-          ? book?.map((book) => {
+        {filterBook && filterBook.length > 0
+          ? filterBook?.map((book) => {
               return (
                 <tr key={book?.id}>
                   <td>
                     <div className=" align-items-center ">
                       <img
-                        src={book?.bookImage}
+                        src={`http://localhost:3001/uploads/${book.bookImage}`}
                         alt=""
                         style={{ width: "60px", height: "60px" }}
                       />
@@ -105,7 +108,12 @@ export const ManageBookComponent = (props) => {
                   </td>
                   <td>
                     <div className="d-flex align-items-center ">
-                      {book?.bookPrice}
+                      {book?.quantity}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="d-flex align-items-center ">
+                      {book?.isBorrowed}
                     </div>
                   </td>
                   <td>
@@ -128,14 +136,15 @@ export const ManageBookComponent = (props) => {
                 </tr>
               );
             })
-          : filterBook?.map((book) => {
+          : book &&
+            book?.map((book) => {
               return (
                 <tr key={book?.id}>
                   <td>
                     <div className=" align-items-center ">
                       <img
-                        src={book?.bookImage}
-                        alt=""
+                        src={`http://localhost:3001/uploads/${book.bookImage}`}
+                        alt={`${book?.bookImage}`}
                         style={{ width: "60px", height: "60px" }}
                       />
                       <div className="ms-3">
@@ -169,8 +178,13 @@ export const ManageBookComponent = (props) => {
                     </div>
                   </td>
                   <td>
-                    <div className="d-flex align-items-center ">
-                      {book?.bookPrice}
+                    <div className="d-flex align-items-center justify-content-center ">
+                      {book?.quantity}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="d-flex align-items-center justify-content-center ">
+                      {book?.isBorrowed}
                     </div>
                   </td>
                   <td>
@@ -179,7 +193,7 @@ export const ManageBookComponent = (props) => {
                       rounded="true"
                       onClick={() => handleOpen(book?.id)}
                     >
-                      Cập nhật
+                      <FaRegEdit style={{ fontSize: "20px" }} />
                     </Button>
                     <Button
                       style={{ marginLeft: "5px" }}
@@ -187,7 +201,7 @@ export const ManageBookComponent = (props) => {
                       rounded="true"
                       onClick={() => handleDelete(book?.id)}
                     >
-                      Xóa
+                      <MdDeleteForever style={{ fontSize: "20px" }} />
                     </Button>
                   </td>
                 </tr>
@@ -196,6 +210,8 @@ export const ManageBookComponent = (props) => {
       </MDBTableBody>
       {/* Modal */}
       <ModalComponent
+        quantity={quantity}
+        setQuantity={setQuantity}
         isBorrowed={isBorrowed}
         book={book}
         authorName={authorName}

@@ -22,6 +22,7 @@ import TableComponent from "../../components/TableComponent/TableComponent";
 import PaginationComponent from "../../components/PaginationComponent/PaginationComponent";
 import { addStudent, getAllStudents } from "../../services/StudentService";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
+import { FaBookReader } from "react-icons/fa";
 
 const ManageStudentPage = () => {
   const location = useLocation();
@@ -91,9 +92,19 @@ const ManageStudentPage = () => {
         className="d-flex flex-column"
         style={{ padding: "0 20px", gap: "25px" }}
       >
-        <h1 style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}>
-          Quản lý Độc giả
-        </h1>
+        <div className="d-flex justify-content-start align-items-center">
+          <FaBookReader
+            style={{
+              fontSize: "20px",
+              margin: "10px",
+            }}
+          />
+          <h1
+            style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}
+          >
+            Quản lý Độc giả
+          </h1>
+        </div>
         <div className="d-flex justify-content-end">
           <Button onClick={toggleOpen}>Thêm độc giả</Button>
         </div>
@@ -124,7 +135,7 @@ const ManageStudentPage = () => {
             <MDBModalDialog>
               <MDBModalContent>
                 <MDBModalHeader>
-                  <MDBModalTitle>Thêm tác giả</MDBModalTitle>
+                  <MDBModalTitle>Thêm độc giả</MDBModalTitle>
                   <Button
                     className="btn-close"
                     color="none"

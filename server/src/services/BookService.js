@@ -1,7 +1,7 @@
 const Book = require("../models/BookModel");
 const createBook = (newBook) => {
   return new Promise(async (resolve, reject) => {
-    const { bookName } = newBook;
+    const { bookName } = newBook.body;
     try {
       const checkBook = await Book.findOne(bookName);
       if (checkBook !== undefined) {

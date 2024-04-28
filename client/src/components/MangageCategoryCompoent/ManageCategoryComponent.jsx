@@ -6,11 +6,12 @@ import ModalComponent from "../ModalComponent/ModalComponent";
 import { useMutationHook } from "../../Hook/useMutationHook";
 import { deleteCategory } from "../../services/CategoryService";
 import { error, success } from "../MessageComponent/MessageComponent";
-
+import { FaRegEdit } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 export const ManageCategoryComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
-  const { category,filterCat ,refetch } = props;
+  const { category, filterCat, refetch } = props;
   const [categoryName, setCategoryName] = useState("");
   // eslint-disable-next-line no-unused-vars
   const [status, setStatus] = useState("");
@@ -55,10 +56,9 @@ export const ManageCategoryComponent = (props) => {
                 new Date(cat?.created_at),
                 "dd/MM/yyyy"
               );
-              const formattedDateUpdated = cat?.updated_at ? format(
-                new Date(cat?.updated_at),
-                "dd/MM/yyyy"
-              ): formattedDateCreated;
+              const formattedDateUpdated = cat?.updated_at
+                ? format(new Date(cat?.updated_at), "dd/MM/yyyy")
+                : formattedDateCreated;
               return (
                 <tr key={cat?.id}>
                   <td>
@@ -89,7 +89,7 @@ export const ManageCategoryComponent = (props) => {
                       variant="primary"
                       rounded="true"
                     >
-                      Cập nhật
+                      <FaRegEdit style={{ fontSize: "20px" }} />
                     </Button>
                     <Button
                       style={{ marginLeft: "5px" }}
@@ -97,7 +97,7 @@ export const ManageCategoryComponent = (props) => {
                       rounded="true"
                       onClick={() => handleDelete(cat?.id)}
                     >
-                      Xóa
+                      <MdDeleteForever style={{ fontSize: "20px" }} />
                     </Button>
                   </td>
                 </tr>
@@ -108,10 +108,9 @@ export const ManageCategoryComponent = (props) => {
                 new Date(cat?.created_at),
                 "dd/MM/yyyy"
               );
-              const formattedDateUpdated = cat?.updated_at ? format(
-                new Date(cat?.updated_at),
-                "dd/MM/yyyy"
-              ): formattedDateCreated;
+              const formattedDateUpdated = cat?.updated_at
+                ? format(new Date(cat?.updated_at), "dd/MM/yyyy")
+                : formattedDateCreated;
               return (
                 <tr key={cat?.id}>
                   <td>
@@ -142,7 +141,7 @@ export const ManageCategoryComponent = (props) => {
                       variant="primary"
                       rounded="true"
                     >
-                      Cập nhật
+                      <FaRegEdit style={{ fontSize: "20px" }} />
                     </Button>
                     <Button
                       style={{ marginLeft: "5px" }}
@@ -150,7 +149,7 @@ export const ManageCategoryComponent = (props) => {
                       rounded="true"
                       onClick={() => handleDelete(cat?.id)}
                     >
-                      Xóa
+                      <MdDeleteForever style={{ fontSize: "20px" }} />
                     </Button>
                   </td>
                 </tr>

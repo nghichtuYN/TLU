@@ -15,6 +15,7 @@ import {
   MDBModalBody,
   MDBModalFooter,
   MDBInput,
+  MDBFile,
 } from "mdb-react-ui-kit";
 import { Button } from "react-bootstrap";
 import TableComponent from "../../components/TableComponent/TableComponent";
@@ -23,6 +24,7 @@ import { addBook, getAllBooks } from "../../services/BookService";
 import { getAllAuthor } from "../../services/AuthorService";
 import { getAllCategories } from "../../services/CategoryService";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
+import { FaBookOpen } from "react-icons/fa";
 
 const ManageBookPage = () => {
   const location = useLocation();
@@ -40,6 +42,7 @@ const ManageBookPage = () => {
   const [category_id, setCatId] = useState("");
   const [authorId, setAuthorId] = useState("");
   const [bookPrice, setBookPrice] = useState(0);
+  const [quantity, setQuantity] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const getAllBook = async () => {
     setIsLoading(true);
@@ -59,7 +62,6 @@ const ManageBookPage = () => {
   useEffect(() => {
     if (book?.data.length === 0) {
       navigate(`/manage-book?pages=${Math.max(page - 1, 1)}&limits=${limit}`);
-      console.log("UseEffect");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [book, page]);
@@ -82,11 +84,11 @@ const ManageBookPage = () => {
   );
   const onSuccessFn = (data, mes) => {
     refetch();
-    setIsLoading(false)
+    setIsLoading(false);
     success(mes);
   };
   const onErrorFn = (data, mes) => {
-    setIsLoading(false)
+    setIsLoading(false);
     error(mes);
   };
   const muationAdd = useMutationHook(
@@ -102,19 +104,21 @@ const ManageBookPage = () => {
       !categoryName ||
       !bookImage ||
       !ISBNNumber ||
-      !bookPrice
+      !bookPrice ||
+      !quantity
     ) {
       return alert(`Vui lòng nhập đủ thông tin`);
     }
-    muationAdd.mutate({
-      bookName,
-      category_id,
-      authorId,
-      bookImage,
-      ISBNNumber,
-      bookPrice,
-      isBorrowed: "false",
-    });
+    const formData = new FormData();
+    formData.append("bookName", bookName);
+    formData.append("bookImage", bookImage);
+    formData.append("bookPrice", bookPrice);
+    formData.append("ISBNNumber", ISBNNumber);
+    formData.append("category_id", category_id);
+    formData.append("authorId", authorId);
+    formData.append("isBorrowed", 0);
+    formData.append("quantity", quantity);
+    muationAdd.mutate(formData);
     toggleOpen();
   };
   const clearBookFields = () => {
@@ -126,6 +130,7 @@ const ManageBookPage = () => {
     setBookImage("");
     setBookPrice(0);
     setISBN_Number("");
+    setQuantity(0);
   };
   return (
     <div>
@@ -133,11 +138,28 @@ const ManageBookPage = () => {
         className="d-flex flex-column"
         style={{ padding: "0 20px", gap: "25px" }}
       >
-        <h1 style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}>
-          Quản lý Sách
-        </h1>
+        <div className="d-flex justify-content-start align-items-center">
+          <FaBookOpen
+            style={{
+              fontSize: "20px",
+              margin: "1px",
+            }}
+          />
+          <h1
+            style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}
+          >
+            Quản lý Sách
+          </h1>
+        </div>
         <div className="d-flex justify-content-end">
-          <Button onClick={toggleOpen}>Thêm Sách</Button>
+          <Button
+            onClick={() => {
+              toggleOpen();
+              clearBookFields();
+            }}
+          >
+            Thêm Sách
+          </Button>
         </div>
         <div className="d-flex flex-column">
           {isLoading ? (
@@ -176,30 +198,29 @@ const ManageBookPage = () => {
                 <Button
                   className="btn-close"
                   color="none"
-                  onClick={toggleOpen}
+                  onClick={() => {
+                    toggleOpen();
+                    clearBookFields();
+                  }}
                 ></Button>
               </MDBModalHeader>
               <MDBModalBody>
+                <label>
+                  <span>Tên sách</span>
+                  <span style={{ color: "red" }}>*</span>
+                </label>
                 <MDBInput
                   onChange={(e) => setBookName(e.target.value)}
-                  label={
-                    <div>
-                      <span>Tên sách</span>
-                      <span style={{ color: "red" }}>*</span>
-                    </div>
-                  }
                   id="bookName"
                   type="text"
                   wrapperClass="mb-4"
                 />
+                <label>
+                  <span>Danh mục</span>
+                  <span style={{ color: "red" }}>*</span>
+                </label>
                 <MDBInput
                   type="text"
-                  label={
-                    <div>
-                      <span>Danh mục</span>
-                      <span style={{ color: "red" }}>*</span>
-                    </div>
-                  }
                   value={categoryName}
                   wrapperClass="mb-4"
                   onChange={(e) => {
@@ -221,15 +242,13 @@ const ManageBookPage = () => {
                     <option key={cat?.id} value={cat?.categoryName} />
                   ))}
                 </datalist>
+                <label>
+                  <span>Tác giả</span>
+                  <span style={{ color: "red" }}>*</span>
+                </label>
                 <MDBInput
                   wrapperClass="mb-4"
                   type="text"
-                  label={
-                    <div>
-                      <span>Tác giả</span>
-                      <span style={{ color: "red" }}>*</span>
-                    </div>
-                  }
                   value={authorName}
                   onChange={(e) => {
                     const selectedAuthor = authorList?.data.find(
@@ -250,40 +269,44 @@ const ManageBookPage = () => {
                     <option key={author?.id} value={author?.authorName} />
                   ))}
                 </datalist>
+                <label>
+                  <span>ISBN</span>
+                  <span style={{ color: "red" }}>*</span>
+                </label>
                 <MDBInput
                   wrapperClass="mb-4"
                   onChange={(e) => setISBN_Number(e.target.value)}
-                  label={
-                    <div>
-                      <span>ISBN</span>
-                      <span style={{ color: "red" }}>*</span>
-                    </div>
-                  }
                   id="ISBN"
                   type="text"
                 />
-                <MDBInput
-                  wrapperClass="mb-4"
-                  onChange={(e) => setBookImage(e.target.value)}
-                  label={
-                    <div>
-                      <span> URL ảnh Sách</span>
-                      <span style={{ color: "red" }}>*</span>
-                    </div>
-                  }
-                  id="bookImage"
-                  type="text"
+                <label>
+                  <span>Đính kèm ảnh</span>
+                  <span style={{ color: "red" }}>*</span>
+                </label>
+                <MDBFile
+                  id="customFile"
+                  onChange={(e) => setBookImage(e.target.files[0])}
+                  wrapperClass="mb-5"
+                  required
                 />
+                <label>
+                  <span> Giá</span>
+                  <span style={{ color: "red" }}>*</span>
+                </label>
                 <MDBInput
                   wrapperClass="mb-4"
                   onChange={(e) => setBookPrice(e.target.value)}
-                  label={
-                    <div>
-                      <span> Giá</span>
-                      <span style={{ color: "red" }}>*</span>
-                    </div>
-                  }
-                  id="bookImage"
+                  id="bookPrice"
+                  type="number"
+                />
+                <label>
+                  <span> Số lượng </span>
+                  <span style={{ color: "red" }}>*</span>
+                </label>
+                <MDBInput
+                  wrapperClass="mb-4"
+                  onChange={(e) => setQuantity(e.target.value)}
+                  id="bookQuantity"
                   type="number"
                 />
               </MDBModalBody>

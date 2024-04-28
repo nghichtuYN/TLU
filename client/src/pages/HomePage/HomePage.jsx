@@ -11,6 +11,8 @@ import { getAllBooks } from "../../services/BookService";
 import { getAllCategories } from "../../services/CategoryService";
 import { getAllAuthor } from "../../services/AuthorService";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
+import { IoMdHome } from "react-icons/io";
+
 const HomePage = () => {
   const [book, setBook] = useState([]);
   const [author, setAuthor] = useState([]);
@@ -56,14 +58,23 @@ const HomePage = () => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const borrowedBooks = book?.data
-    ? book?.data.filter((book) => book.isBorrowed === true)
-    : [];
+  const totalBorrowed = book?.data?.reduce((total, book) => total + book.isBorrowed, 0);
+  console.log(totalBorrowed )
+  
+
   return (
-    <div className="pt-4">
-      <h1 style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}>
-        Trang chủ
-      </h1>
+    <div className="pt-4" >
+      <div className="d-flex justify-content-start align-items-center">
+        <IoMdHome
+          style={{
+            fontSize: "30px",
+            margin: "10px",
+          }}
+        />
+        <h1 style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}>
+          Trang chủ
+        </h1>
+      </div>
       {isLoading ? (
         <SpinnerComponent />
       ) : (
@@ -84,7 +95,7 @@ const HomePage = () => {
                 alt=""
               />
               <Card.Body className="text-center">
-                <Card.Title>{borrowedBooks.length}</Card.Title>
+                <Card.Title>{totalBorrowed}</Card.Title>
                 <Card.Title>Sách chưa trả</Card.Title>
               </Card.Body>
             </Card>

@@ -81,17 +81,17 @@ const totalOrder = () => {
 };
 const updateOrder = (id, updatedata) => {
   return new Promise(async (resolve, reject) => {
+    const { returnStatus,orderItems } = updatedata;
     try {
       const currentDate = new Date();
       const dateString = moment(currentDate).format("YYYY-MM-DD"); // Sử dụng moment.js để định dạng chuỗi
-      const { returnStatus,orderItems } = updatedata;
       console.log('orderItems',orderItems)
       const pool = await connect();
       for (const orderItem of orderItems) {
         const sqlString = `UPDATE [book] SET isBorrowed = @isBorrowed WHERE id = @id`;
         await pool
           .request()
-          .input("isBorrowed", sql.Int, 0)
+          .input("isBorrowed", sql.Int, orderItem.isBorrowed=orderItem.isBorrowed-1)
           .input("id", sql.Int, orderItem.id)
           .query(sqlString);
       }

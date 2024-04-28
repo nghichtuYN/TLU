@@ -36,7 +36,7 @@ const NavbarCompoent = () => {
     { path: `/manage-author?pages=${page}&limits=${limit}`, title: "Quản lý tác giả", icon: <SiComposer /> },
     {
       path: `/manage-student?pages=${page}&limits=${limit}`,
-      title: "Quản lý sinh viên",
+      title: "Quản lý độc giả",
       icon: <FaBookReader />,
     },
     {

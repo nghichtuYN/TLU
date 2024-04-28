@@ -6,7 +6,8 @@ import ModalComponent from "../ModalComponent/ModalComponent";
 import { useMutationHook } from "../../Hook/useMutationHook";
 import { error, success } from "../MessageComponent/MessageComponent";
 import { deleteStudent } from "../../services/StudentService";
-
+import { FaRegEdit } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 const ManageStudentComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
@@ -133,7 +134,7 @@ const ManageStudentComponent = (props) => {
                       rounded="true"
                       onClick={() => handleOpen(student?.id)}
                     >
-                      Cập nhật
+                      <FaRegEdit style={{ fontSize: "20px" }} />
                     </Button>
                     <Button
                       style={{ marginLeft: "5px" }}
@@ -141,7 +142,7 @@ const ManageStudentComponent = (props) => {
                       rounded="true"
                       onClick={() => handleDelete(student?.id)}
                     >
-                      Xóa
+                      <MdDeleteForever style={{ fontSize: "20px" }} />
                     </Button>
                   </td>
                 </tr>

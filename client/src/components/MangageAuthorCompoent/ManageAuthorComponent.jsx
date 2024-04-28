@@ -6,7 +6,8 @@ import ModalComponent from "../ModalComponent/ModalComponent";
 import { useMutationHook } from "../../Hook/useMutationHook";
 import { error, success } from "../MessageComponent/MessageComponent";
 import { deleteAuthor } from "../../services/AuthorService";
-
+import { FaRegEdit } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 export const ManageAuthorComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
@@ -75,7 +76,7 @@ export const ManageAuthorComponent = (props) => {
                       rounded="true"
                       onClick={() => handleOpen(author?.id)}
                     >
-                      Cập nhật
+                      <FaRegEdit style={{fontSize:'20px'}}/>
                     </Button>
                     <Button
                       style={{ marginLeft: "5px" }}
@@ -83,7 +84,7 @@ export const ManageAuthorComponent = (props) => {
                       rounded="true"
                       onClick={() => handleDelete(author?.id)}
                     >
-                      Xóa
+                      <MdDeleteForever style={{fontSize:'20px'}}/>
                     </Button>
                   </td>
                 </tr>

@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import ModalComponent from "../ModalComponent/ModalComponent";
 import { getDetailsStudent } from "../../services/StudentService";
 import { getDetaislBook } from "../../services/BookService";
-
+import { FaRegEdit } from "react-icons/fa";
 const ManageOrderComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
@@ -43,13 +43,12 @@ const ManageOrderComponent = (props) => {
     if (order) {
       const selectedOrder = order?.find((order) => order?.id === id);
       if (selectedOrder) {
-        console.log(selectedOrder)
         setOrderId(selectedOrder?.id);
         const student= await getDetailStudent(selectedOrder?.UserId)
         setDetailStudent(student);
         getOrderItems(selectedOrder)
-        const formattedBorrowDate = selectedOrder?.borrowsDate
-          ? format(new Date(selectedOrder?.borrowsDate), "dd/MM/yyyy")
+        const formattedBorrowDate = selectedOrder?.borrowDate
+          ? format(new Date(selectedOrder?.borrowDate), "dd/MM/yyyy")
           : "";
         const formattedReturnDate = selectedOrder?.returnDate
           ? format(new Date(selectedOrder?.returnDate), "dd/MM/yyyy")
@@ -62,15 +61,14 @@ const ManageOrderComponent = (props) => {
   };
 
 
-
   return (
     <>
       <MDBTableBody>
         {order
           ? order?.map((order) => {
-              const formattedDateCreated = order?.borrowDate
-                ? format(new Date(order?.borrowDate), "dd/MM/yyyy")
-                : "";
+            const formattedDateCreated = order?.borrowDate
+            ? format(new Date(order?.borrowDate), "dd/MM/yyyy")
+            : "";
               const formattedDateReturn = order?.returnDate
                 ? format(new Date(order?.returnDate), "dd/MM/yyyy")
                 : "Chưa trả";
@@ -142,14 +140,16 @@ const ManageOrderComponent = (props) => {
                     </div>
                   </td>
                   <td>
+                  <div className="d-flex align-items-center justify-content-center">
                     <Button
                       disabled={order?.returnStatus}
                       variant="primary"
                       rounded="true"
                       onClick={() => handleOpen(order?.id)}
                     >
-                      Cập nhật
+                      <FaRegEdit style={{fontSize:'20px'}}/>
                     </Button>
+                    </div>
                   </td>
                 </tr>
               );

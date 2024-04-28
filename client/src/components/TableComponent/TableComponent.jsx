@@ -23,35 +23,50 @@ const TableComponent = (props) => {
   const onChange = (e) => {
     setSearchValue(e.target.value);
   };
-  const [filterCat,setFilterCat]=useState([])
-  const [filterBook,setFilterBook]=useState([])
+  const [filterCat, setFilterCat] = useState([]);
+  const [filterBook, setFilterBook] = useState([]);
   useEffect(() => {
-    if (category) {
-      setFilterCat(
-        category?.filter((cat) =>
-          cat?.categoryName.toLowerCase().includes(searchValue.toLowerCase())
-        )
-      );
+    if (searchValue !== "") {
+      if (category) {
+        setFilterCat(
+          category?.filter((cat) =>
+            cat?.categoryName.toLowerCase().includes(searchValue.toLowerCase())
+          )
+        );
+      }
+      if (book) {
+        setFilterBook(
+          book?.filter(
+            (book) =>
+              book?.bookName
+                .toLowerCase()
+                .includes(searchValue.toLowerCase()) ||
+              book?.authorName
+                .toLowerCase()
+                .includes(searchValue.toLowerCase()) ||
+              book?.categoryName
+                .toLowerCase()
+                .includes(searchValue.toLowerCase())
+          )
+        );
+      }
     }
-    if(book){
-      setFilterBook(
-        book?.filter((book) =>
-          book?.bookName.toLowerCase().includes(searchValue.toLowerCase())
-        )
-      );
-    }
-  }, [category, searchValue, author,book]);
-
+    // console.log('filterCat',filterCat)
+  }, [category, searchValue, book]);
   return (
     <div>
       <div>
         <SearchComponent value={searchValue} onChange={onChange} />
       </div>
       <div>
-        <MDBTable align="middle" style={{ fontSize: "16px" }}>
-          <MDBTableHead>
+        <MDBTable
+          align="middle"
+          style={{ fontSize: "16px", borderRadius: "1px solid" }}
+          bordered
+        >
+          <MDBTableHead color="primary-color">
             {category ? (
-              <tr>
+              <tr className="table-secondary">
                 <th scope="col">Tên danh mục</th>
                 <th scope="col">Trạng thái</th>
                 <th scope="col">Ngày tạo</th>
@@ -59,23 +74,24 @@ const TableComponent = (props) => {
                 <th scope="col">Hoạt động</th>
               </tr>
             ) : author ? (
-              <tr>
+              <tr className="table-secondary">
                 <th scope="col">Tên tác giả</th>
                 <th scope="col">Ngày tạo</th>
                 <th scope="col">Ngày sửa</th>
                 <th scope="col">Hoạt động</th>
               </tr>
             ) : book ? (
-              <tr>
+              <tr className="table-secondary">
                 <th scope="col">Tên sách</th>
                 <th scope="col">Loại Sách</th>
                 <th scope="col">Tác giả</th>
                 <th scope="col">ISBN Number</th>
-                <th scope="col">Giá</th>
+                <th scope="col">Số lượng</th>
+                <th scope="col">Đang mượn</th>
                 <th scope="col">Hoạt động</th>
               </tr>
             ) : student ? (
-              <tr>
+              <tr className="table-secondary">
                 <th scope="col">Mã SV</th>
                 <th scope="col">Tên độc giả</th>
                 <th scope="col">Email</th>
@@ -85,7 +101,7 @@ const TableComponent = (props) => {
                 <th scope="col">Hoạt động</th>
               </tr>
             ) : order ? (
-              <tr>
+              <tr className="table-secondary">
                 <th scope="col">Mã SV</th>
                 <th scope="col">Tên độc giả</th>
                 <th scope="col">Tên sách</th>
@@ -98,9 +114,14 @@ const TableComponent = (props) => {
           </MDBTableHead>
           {/* Body danh muc */}
           {category ? (
-            <ManageCategoryComponent refetch={refetch} category={category} filterCat={filterCat} setFilterCat={setFilterCat}/>
+            <ManageCategoryComponent
+              refetch={refetch}
+              category={category}
+              filterCat={filterCat}
+              setFilterCat={setFilterCat}
+            />
           ) : author ? (
-          // Body tác giả
+            // Body tác giả
             <ManageAuthorComponent refetch={refetch} author={author} />
           ) : book ? (
             // body sách
@@ -111,12 +132,16 @@ const TableComponent = (props) => {
               authorList={authorList}
               filterBook={filterBook}
             />
-            // body học sinh
-          ) : student ? (
+          ) : // body học sinh
+          student ? (
             <ManageStudentComponent refetch={refetch} student={student} />
-            // body đơn hàng
-          ) : order ? (
-            <ManageOrderComponent refetchBook={refetchBook} refetch={refetch} order={order} />
+          ) : // body đơn hàng
+          order ? (
+            <ManageOrderComponent
+              refetchBook={refetchBook}
+              refetch={refetch}
+              order={order}
+            />
           ) : null}
         </MDBTable>
       </div>

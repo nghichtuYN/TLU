@@ -22,6 +22,7 @@ import {
 } from "../../components/MessageComponent/MessageComponent";
 import { useNavigate } from "react-router-dom";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
+import { BiSolidCategory } from "react-icons/bi";
 
 const ManageCategory = () => {
   const location = useLocation();
@@ -88,9 +89,15 @@ const ManageCategory = () => {
         className="d-flex flex-column"
         style={{ padding: "0 20px", gap: "25px" }}
       >
+        <div className="d-flex justify-content-start align-items-center">
+        <BiSolidCategory style={{
+                fontSize: "20px",
+                margin: "1px",
+              }} />
         <h1 style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}>
           Quản lý Danh mục
         </h1>
+        </div>
         <div className="d-flex justify-content-end">
           <Button onClick={toggleOpen}>Thêm Danh mục</Button>
         </div>

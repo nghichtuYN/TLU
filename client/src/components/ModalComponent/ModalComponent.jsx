@@ -10,6 +10,7 @@ import {
   MDBRadio,
   MDBTableBody,
   MDBTable,
+  MDBFile,
 } from "mdb-react-ui-kit";
 import { Button } from "react-bootstrap";
 import "./style.css";
@@ -42,6 +43,8 @@ const ModalComponent = (props) => {
     setAuthorName,
     bookImage,
     setBookImage,
+    quantity,
+    setQuantity,
     ISBNNumber,
     setISBN_Number,
     bookName,
@@ -74,7 +77,6 @@ const ModalComponent = (props) => {
   const onSuccessFn = (data, mes) => {
     refetch();
     if (order) {
-      console.log("Running");
       refetchBook();
     }
     success(mes);
@@ -82,7 +84,6 @@ const ModalComponent = (props) => {
   const onErrorfn = (data, mes) => {
     error(mes);
   };
-
   const updateRow = (data) => {
     const { id, ...rest } = data;
     if (category) {
@@ -90,14 +91,14 @@ const ModalComponent = (props) => {
     } else if (author) {
       return updateAuthor(id, rest);
     } else if (book) {
-      return updateBook(id, rest);
+      return updateBook(data.get("id"), data);
     } else if (student) {
       return updateStudent(id, rest);
     } else if (order) {
+      console.log(rest)
       return updateOrder(id, rest);
     }
   };
-
   const mutationUpdate = useMutationHook(
     updateRow,
     (data) => onSuccessFn(data, "Cập nhật thành công"),
@@ -109,16 +110,17 @@ const ModalComponent = (props) => {
     } else if (author) {
       mutationUpdate.mutate({ id: authorId, authorName });
     } else if (book) {
-      mutationUpdate.mutate({
-        id: bookID,
-        bookName,
-        bookImage,
-        bookPrice,
-        ISBNNumber,
-        category_id,
-        authorId,
-        isBorrowed
-      });
+      const formData = new FormData();
+      formData.append("id", bookID);
+      formData.append("bookName", bookName);
+      formData.append("bookImage", bookImage);
+      formData.append("bookPrice", bookPrice);
+      formData.append("ISBNNumber", ISBNNumber);
+      formData.append("category_id", category_id);
+      formData.append("authorId", authorId);
+      formData.append("isBorrowed", isBorrowed);
+      formData.append("quantity", quantity);
+      mutationUpdate.mutate(formData);
     } else if (student) {
       mutationUpdate.mutate({
         id: studentId,
@@ -232,6 +234,7 @@ const ModalComponent = (props) => {
                       </div>
                     }
                     id="bookName"
+                    wrapperClass="mb-4"
                     type="text"
                   />
                   <MDBInput
@@ -242,6 +245,7 @@ const ModalComponent = (props) => {
                         <span style={{ color: "red" }}>*</span>
                       </div>
                     }
+                    wrapperClass="mb-4"
                     value={categoryName}
                     onChange={(e) => {
                       const selectedCat = categoryList?.find(
@@ -270,6 +274,7 @@ const ModalComponent = (props) => {
                         <span style={{ color: "red" }}>*</span>
                       </div>
                     }
+                    wrapperClass="mb-4"
                     value={authorName}
                     onChange={(e) => {
                       const selectedAuthor = authorList.find(
@@ -300,22 +305,17 @@ const ModalComponent = (props) => {
                       </div>
                     }
                     id="ISBN"
+                    wrapperClass="mb-4"
                     type="text"
                   />
-                  <MDBInput
-                    onChange={(e) => setBookImage(e.target.value)}
-                    value={bookImage}
-                    label={
-                      <div>
-                        <span> URL ảnh Sách</span>
-                        <span style={{ color: "red" }}>*</span>
-                      </div>
-                    }
-                    id="bookImage"
-                    type="text"
+                  <MDBFile
+                    label="Đính kèm ảnh"
+                    id="customFile"
+                    onChange={(e) => setBookImage(e.target.files[0])}
                   />
                   <MDBInput
                     onChange={(e) => setBookPrice(e.target.value)}
+                    wrapperClass="mb-4"
                     value={bookPrice}
                     label={
                       <div>
@@ -323,7 +323,20 @@ const ModalComponent = (props) => {
                         <span style={{ color: "red" }}>*</span>
                       </div>
                     }
-                    id="bookImage"
+                    id="bookPrice"
+                    type="number"
+                  />
+                  <MDBInput
+                    onChange={(e) => setQuantity(e.target.value)}
+                    value={quantity}
+                    label={
+                      <div>
+                        <span> Số lượng</span>
+                        <span style={{ color: "red" }}>*</span>
+                      </div>
+                    }
+                    id="bookQuantity"
+                    wrapperClass="mb-4"
                     type="number"
                   />
                 </>
@@ -445,7 +458,7 @@ const ModalComponent = (props) => {
                                     <div className=" align-items-center ">
                                       <div>Ảnh: </div>
                                       <img
-                                        src={items?.bookImage}
+                                        src={`http://localhost:3001/uploads/${items?.bookImage}`}
                                         alt=""
                                         style={{
                                           width: "60px",
@@ -457,7 +470,7 @@ const ModalComponent = (props) => {
                                   <td>
                                     <div style={{ maxWidth: "300px" }}>
                                       <p>Tên sách: {items?.bookName}</p>
-                                      <p>ISBNNUmber: {items?.ISBNNumber}</p>
+                                      <p>ISBNNmber: {items?.ISBNNumber}</p>
                                       <p>Ngày mượn: {borrowDate}</p>
                                       <p>Ngày trả: {returnDate}</p>
                                     </div>
@@ -473,7 +486,7 @@ const ModalComponent = (props) => {
                                   value="true"
                                   onChange={(e) => setStatus(e.target.value)}
                                   label="Đã trả"
-                                  checked={status}
+                                  // checked={status}
                                   inline
                                 />
                               </td>
