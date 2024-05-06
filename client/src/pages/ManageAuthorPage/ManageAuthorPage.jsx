@@ -87,14 +87,18 @@ const ManageAuthorPage = () => {
         style={{ padding: "0 20px", gap: "25px" }}
       >
         <div className="d-flex justify-content-start align-items-center">
-        <SiComposer style={{
-            fontSize: "20px",
-            margin: "10px",
-            fontWeight:'bold'
-          }} />
-        <h1 style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}>
-          Quản lý tác giả
-        </h1>
+          <SiComposer
+            style={{
+              fontSize: "20px",
+              margin: "10px",
+              fontWeight: "bold",
+            }}
+          />
+          <h1
+            style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}
+          >
+            Quản lý tác giả
+          </h1>
         </div>
         <div className="d-flex justify-content-end">
           <Button onClick={toggleOpen}>Thêm tác giả</Button>
@@ -135,10 +139,12 @@ const ManageAuthorPage = () => {
                 ></Button>
               </MDBModalHeader>
               <MDBModalBody>
-                {/* <MDBFile label="Default file input example" id="customFile" /> */}
+                <label className="mb-3">
+                  <span>Tên tác giả</span>
+                  <span style={{ color: "red" }}>*</span>
+                </label>
                 <MDBInput
                   onChange={(e) => setAuthorName(e.target.value)}
-                  label="Tên tác giả"
                   id="authorName1"
                   type="text"
                 />

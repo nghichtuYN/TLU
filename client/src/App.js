@@ -1,11 +1,12 @@
 import DefaultLayout from "./Layout/DefaultLayout";
 import { Route, Routes } from "react-router-dom";
 import { publicRoute } from "./routes/routes";
-import { Fragment, useEffect } from "react";
+import {  useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { getDetailsUser } from "./services/AdminService";
 import { updateMember } from "./redux/Slice/MemberSlice";
+import HomePageLayout from "./Layout/HomePageLayout";
 
 
 const App = () => {
@@ -33,7 +34,7 @@ const App = () => {
     <div className="App">
       <Routes>
         {publicRoute.map((route, index) => {
-          const Layout = route.isShowHeader ? DefaultLayout : Fragment;
+          const Layout = route.isShowHeader ? DefaultLayout : HomePageLayout;
           const Page = route.component;
           return (
             <Route

@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { MDBTable, MDBTableHead } from "mdb-react-ui-kit";
-import { SearchComponent } from "../SearchComponent/SearchComponent";
 import "./style.css";
 import { ManageCategoryComponent } from "../MangageCategoryCompoent/ManageCategoryComponent";
 import { ManageAuthorComponent } from "../MangageAuthorCompoent/ManageAuthorComponent";
@@ -18,46 +17,38 @@ const TableComponent = (props) => {
     order,
     categoryList,
     authorList,
+    filterBook,
+    searchValue
   } = props;
-  const [searchValue, setSearchValue] = useState("");
-  const onChange = (e) => {
-    setSearchValue(e.target.value);
-  };
   const [filterCat, setFilterCat] = useState([]);
-  const [filterBook, setFilterBook] = useState([]);
-  useEffect(() => {
-    if (searchValue !== "") {
-      if (category) {
-        setFilterCat(
-          category?.filter((cat) =>
-            cat?.categoryName.toLowerCase().includes(searchValue.toLowerCase())
-          )
-        );
-      }
-      if (book) {
-        setFilterBook(
-          book?.filter(
-            (book) =>
-              book?.bookName
-                .toLowerCase()
-                .includes(searchValue.toLowerCase()) ||
-              book?.authorName
-                .toLowerCase()
-                .includes(searchValue.toLowerCase()) ||
-              book?.categoryName
-                .toLowerCase()
-                .includes(searchValue.toLowerCase())
-          )
-        );
-      }
-    }
-    // console.log('filterCat',filterCat)
-  }, [category, searchValue, book]);
+ 
+  
+  
+  // useEffect(() => {
+  //   if (searchValue !== "") {
+  //     if (category) {
+  //       setFilterCat(
+  //         category?.filter((cat) =>
+  //           cat?.categoryName.toLowerCase().includes(searchValue.toLowerCase())
+  //         )
+  //       );
+  //     }
+  //     if (book) {
+  //       getBookFilters(searchValue);
+  //     }
+  //   } else if (searchValue === "") {
+  //     if (book) {
+  //       setFilterBook([]);
+  //     }
+  //     if (category) {
+  //       setFilterCat([]);
+  //     }
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [category,, book]);
   return (
     <div>
-      <div>
-        <SearchComponent value={searchValue} onChange={onChange} />
-      </div>
+      
       <div>
         <MDBTable
           align="middle"
@@ -130,7 +121,9 @@ const TableComponent = (props) => {
               book={book}
               categoryList={categoryList}
               authorList={authorList}
+              // allBook={allBook}
               filterBook={filterBook}
+              searchValue={searchValue}
             />
           ) : // body học sinh
           student ? (

@@ -1,23 +1,23 @@
+import { MDBFooter } from "mdb-react-ui-kit";
 import React from "react";
 import { Container, Col, Row } from "react-bootstrap";
 
 const FooterComponent = () => {
   return (
-    <Container >
+    <Container>
       <Row>
         <Col>
-          <footer
-            style={{
-              height: "50px",
-              backgroundColor: "#333",
-              color: "#fff",
-              textAlign: "center",
-              lineHeight: "50px",
-               borderRadius: "5px"
-            }}
-          >
-            Footer
-          </footer>
+          <MDBFooter bgColor="light" className="text-center text-lg-left">
+            <div
+              className="text-center p-3"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
+            >
+              &copy; {new Date().getFullYear()} Copyright:{" "}
+              <a className="text-dark" href="https://www.facebook.com/nghichtuyn">
+                Nhóm 9 Công nghệ phần mềm TLU
+              </a>
+            </div>
+          </MDBFooter>
         </Col>
       </Row>
     </Container>

@@ -37,7 +37,7 @@ const ManageCategory = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const getAllCategory = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         try {
@@ -90,13 +90,17 @@ const ManageCategory = () => {
         style={{ padding: "0 20px", gap: "25px" }}
       >
         <div className="d-flex justify-content-start align-items-center">
-        <BiSolidCategory style={{
-                fontSize: "20px",
-                margin: "1px",
-              }} />
-        <h1 style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}>
-          Quản lý Danh mục
-        </h1>
+          <BiSolidCategory
+            style={{
+              fontSize: "20px",
+              margin: "1px",
+            }}
+          />
+          <h1
+            style={{ fontFamily: "inherit", fontSize: "24px", margin: "10px" }}
+          >
+            Quản lý Danh mục
+          </h1>
         </div>
         <div className="d-flex justify-content-end">
           <Button onClick={toggleOpen}>Thêm Danh mục</Button>
@@ -137,19 +141,27 @@ const ManageCategory = () => {
                 ></Button>
               </MDBModalHeader>
               <MDBModalBody>
-                {/* <MDBFile label="Default file input example" id="customFile" /> */}
+                <label className="mb-1">
+                  <span>Tên danh mục</span>
+                  <span style={{ color: "red" }}>*</span>
+                </label>
                 <MDBInput
                   onChange={(e) => setCategoryName(e.target.value)}
-                  label="Tên danh mục"
+                  wrapperClass="mb-4"
                   id="categoryName1"
                   type="text"
                 />
+                <label>
+                  <span>Trạng thái</span>
+                  <span style={{ color: "red" }}>*</span>
+                </label>
                 <MDBRadio
                   name="inlineRadio"
                   id="inlineRadio3"
                   value="false"
                   label="Ẩn"
                   onChange={(e) => setStatus(e.target.value)}
+                  style={{ marginLeft: "3px" }} 
                   inline
                 />
                 <MDBRadio

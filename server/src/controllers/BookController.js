@@ -42,6 +42,18 @@ const getAllBook = async (req, res) => {
     });
   }
 };
+const getBookFilter = async (req, res) => {
+  try {
+    const { limit, page } = req.query;
+    const {searchValue}=req.body
+    const response = await BookServices.getBookFilter(Number(limit), Number(page),searchValue);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
 const updateBook = async (req, res) => {
   try {
     const bookId = req.params.id;
@@ -80,6 +92,7 @@ const getDetailsBook = async (req, res) => {
 const deleteBook = async (req, res) => {
   try {
     const bookId = req.params.id;
+    console.log(bookId)
     if (!bookId) {
       return res.status(200).json({
         status: "ERR",
@@ -100,4 +113,5 @@ module.exports = {
   updateBook,
   deleteBook,
   getDetailsBook,
+  getBookFilter
 };

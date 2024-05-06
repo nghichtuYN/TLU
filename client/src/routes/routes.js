@@ -1,4 +1,5 @@
 import HomePage from "../pages/HomePage/HomePage";
+import HomePageStudent from "../pages/HomePageStudent/HomePageStudent";
 import ManageAuthorPage from "../pages/ManageAuthorPage/ManageAuthorPage";
 import ManageBookPage from "../pages/ManageBookPage/ManageBookPage";
 import ManageCategory from "../pages/ManageCategory/ManageCategory";
@@ -19,5 +20,6 @@ export const publicRoute=[
     {path:`/manage-category`,component:ManageCategory,isShowHeader:true},
     {path:'/manage-member',component:ManageMember,isShowHeader:true},
     {path:'/manage-order',component:ManageOrderPage,isShowHeader:true},
+    {path:'/home-page',component:HomePageStudent,isShowHeader:false},
 
 ]

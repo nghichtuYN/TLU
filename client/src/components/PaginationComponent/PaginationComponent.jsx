@@ -15,7 +15,7 @@ const PaginationComponent = (props) => {
     isCategory,
     isBook,
     isStudent,
-    isOrder
+    isOrder,
   } = props;
   const totalPages = (totalPage) => {
     return Array.from({ length: totalPage }, (_, index) => index);

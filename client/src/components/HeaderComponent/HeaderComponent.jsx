@@ -5,7 +5,8 @@ import { Container, Col, Row, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { CiLogin } from "react-icons/ci";
-const HeaderComponent = () => {
+const HeaderComponent = (props) => {
+  const { isShowLogin } = props;
   const navigate = useNavigate();
   const handleLogin = () => {
     navigate("/sign-in");
@@ -19,7 +20,7 @@ const HeaderComponent = () => {
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#C9BDBD",
-        borderRadius:'3px'
+        borderRadius: "3px",
       }}
     >
       <Row
@@ -33,10 +34,15 @@ const HeaderComponent = () => {
         <Col className="col-1 d-flex justify-content-end">
           <Image
             src={logo}
-            style={{ width: "70px", height: "100px", paddingBottom: "20px",cursor:'pointer' }}
-            onClick={
-              ()=>{navigate('/')}
-            }
+            style={{
+              width: "70px",
+              height: "100px",
+              paddingBottom: "20px",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              navigate("/");
+            }}
           />
         </Col>
         <Col
@@ -54,42 +60,45 @@ const HeaderComponent = () => {
             Library Management System
           </span>
         </Col>
+
         <Col className="col-8 d-flex justify-content-end align-items-center">
-          <div
-            style={{
-              fontSize: "1.5rem",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-          >
-            {member?.fullName ? (
-              <div className="d-flex justify-content-center align-items-center">
-                <MdOutlineAccountCircle
-                  style={{ fontSize: "3rem", marginRight: "10px" }}
-                />
-                <div style={{ marginTop: "20px" }} className="text-start">
-                  <span>{member?.fullName}</span>
-                  <br />
-                  {member?.isAdmin ? (
-                    <span style={{ fontSize: "15px", marginTop: "0" }}>
-                      Admin
-                    </span>
-                  ) : (
-                    <span style={{ fontSize: "15px", marginTop: "0" }}>
-                      Thủ thư
-                    </span>
-                  )}
+          {!isShowLogin ? (
+            <div
+              style={{
+                fontSize: "1.5rem",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              {member?.fullName ? (
+                <div className="d-flex justify-content-center align-items-center">
+                  <MdOutlineAccountCircle
+                    style={{ fontSize: "3rem", marginRight: "10px" }}
+                  />
+                  <div style={{ marginTop: "20px" }} className="text-start">
+                    <span>{member?.fullName}</span>
+                    <br />
+                    {member?.isAdmin ? (
+                      <span style={{ fontSize: "15px", marginTop: "0" }}>
+                        Admin
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: "15px", marginTop: "0" }}>
+                        Thủ thư
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div onClick={(e) => handleLogin(e)}>
-                <span style={{ fontSize: "1.5rem", cursor: "pointer" }}>
-                  Đăng nhập
-                </span>
-                <CiLogin style={{ fontSize: "3rem", marginRight: "10px" }} />
-              </div>
-            )}
-          </div>
+              ) : (
+                <div onClick={(e) => handleLogin(e)}>
+                  <span style={{ fontSize: "1.5rem", cursor: "pointer" }}>
+                    Đăng nhập
+                  </span>
+                  <CiLogin style={{ fontSize: "3rem", marginRight: "10px" }} />
+                </div>
+              )}
+            </div>
+          ) : null}
         </Col>
       </Row>
     </Container>

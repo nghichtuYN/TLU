@@ -1,4 +1,6 @@
 const Book = require("../models/BookModel");
+const OrderItems = require("../models/OrderItemsModel");
+const Order=require("../models/OrderModel")
 const createBook = (newBook) => {
   return new Promise(async (resolve, reject) => {
     const { bookName } = newBook.body;
@@ -36,6 +38,23 @@ const getAllBook = (limit, page) => {
         total: totalBook,
         pageCurrent: Number(page + 1),
         totalPage: Math.ceil(totalBook / limit),
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+const getBookFilter = (limit, page,searchValue) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const {data,total} = await Book.getBookFilter(limit,page,searchValue) 
+      resolve({
+        status: "OK",
+        message: "GET SUCCESS",
+        data: data,
+        total: total.length,
+        pageCurrent: Number(page + 1),
+        totalPage: Math.ceil(total.length / limit),
       });
     } catch (error) {
       reject(error);
@@ -87,6 +106,10 @@ const deleteBook = (id) => {
           message: "The Book is not defined",
         });
       }
+      const orderId =await OrderItems.deleteOrderItemsByBookId(id)
+      orderId?.map(async(order)=>{
+        await Order.deleteOrderByOrderItems(order?.orderId)
+      })
       await Book.deleteBook(id);
       resolve({
         status: "OK",
@@ -103,4 +126,5 @@ module.exports = {
   updateBook,
   deleteBook,
   getDetailsBook,
+  getBookFilter
 };

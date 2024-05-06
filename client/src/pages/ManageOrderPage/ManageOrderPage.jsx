@@ -130,11 +130,11 @@ const ManageOrderPage = () => {
   const handleAdd = async (event) => {
     event.preventDefault();
     console.log(stu, orderItems, borrowDate);
-    if (stu?.length===0 || orderItems?.length===0 || !borrowDate) {
-      console.log("running")
+    if (stu?.length === 0 || orderItems?.length === 0 || !borrowDate) {
+      console.log("running");
       return alert(`Vui lòng nhập đủ thông tin`);
     } else {
-      console.log("running")
+      console.log("running");
 
       const student = stu.map((stu) => stu.id);
       muationAdd.mutate({
@@ -219,24 +219,23 @@ const ManageOrderPage = () => {
                 </MDBModalHeader>
                 <MDBModalBody>
                   <div>
-                    <MDBInput
+                    <label>
+                      <span>Mã sinh viên</span>
+                      <span style={{ color: "red" }}>*</span>
+                    </label>
+                    <select
                       onChange={onChangeStudent}
-                      label={
-                        <div>
-                          <span>Mã sinh viên</span>
-                          <span style={{ color: "red" }}>*</span>
-                        </div>
-                      }
                       id="studentCode"
-                      type="text"
-                      list="optionsStudent"
+                      className="form-select"
                       required
-                    />
-                    <datalist id="optionsStudent">
+                    >
+                      <option value="">--Chọn sinh viên--</option>
                       {student?.data.map((stu) => (
-                        <option key={stu?.id} value={stu?.studentCode} />
+                        <option key={stu?.id} value={stu?.studentCode}>
+                          {stu?.studentCode}
+                        </option>
                       ))}
-                    </datalist>
+                    </select>
 
                     <div>
                       {stu?.map((stu) => (
@@ -268,29 +267,32 @@ const ManageOrderPage = () => {
                     </div>
                   </div>
                   <div>
-                    <MDBInput
+                    <label>
+                      <span>Sách mượn</span>
+                      <span style={{ color: "red" }}>*</span>
+                    </label>
+                    <select
                       required
-                      type="text"
-                      label={
-                        <div>
-                          <span>Sách mượn</span>
-                          <span style={{ color: "red" }}>*</span>
-                        </div>
-                      }
                       onChange={handleInputChange}
-                      list="optionsBook"
-                    />
-                    <datalist id="optionsBook">
+                      className="form-select"
+                    >
+                      <option value="">--Chọn sách--</option>
                       {book?.data.map((book) => {
-                        if (book?.quantity > book.isBorrowed) {
-                          return (
-                            <option key={book?.id} value={book?.bookName} />
-                          );
-                        } else {
-                          return null;
-                        }
+                        console.log(book?.quantity === book.isBorrowed);
+                        return (
+                          <option
+                            key={book?.id}
+                            value={book?.bookName}
+                            disabled={book?.quantity === book.isBorrowed}
+                          >
+                            {book?.bookName}{" "}
+                            {book?.quantity === book.isBorrowed ? (
+                              <div style={{color:'red'}}>(hết sách)</div>
+                            ) : null}
+                          </option>
+                        );
                       })}
-                    </datalist>
+                    </select>
 
                     <div style={{ marginBottom: "10px" }}>
                       {orderItems.map((items) => (
@@ -318,28 +320,25 @@ const ManageOrderPage = () => {
                       ))}
                     </div>
                   </div>
+                  <label>
+                    <span>Ngày mượn</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     required
                     value={borrowDate}
-                    label={
-                      <div>
-                        <span>Ngày mượn</span>
-                        <span style={{ color: "red" }}>*</span>
-                      </div>
-                    }
                     id="email"
                     type="date"
+                    wrapperClass="mb-4"
                     onChange={(e) => setBorrowDate(e.target.value)}
                   />
+                  <label>
+                    <span>Ngày trả</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     // required
                     onChange={(e) => setReturnDate(e.target.value)}
-                    label={
-                      <div>
-                        <span>Ngày trả</span>
-                        <span style={{ color: "red" }}>*</span>
-                      </div>
-                    }
                     id="mobileNumber"
                     type="date"
                   />

@@ -59,7 +59,6 @@ const HomePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const totalBorrowed = book?.data?.reduce((total, book) => total + book.isBorrowed, 0);
-  console.log(totalBorrowed )
   
 
   return (
@@ -121,6 +120,9 @@ const HomePage = () => {
             <Card
               className="col-3"
               style={{ width: "16rem", cursor: "pointer", marginLeft: "50px" }}
+              onClick={() =>
+                navigate(`/manage-student?pages=${page}&limits=${limit}`)
+              }
             >
               <Card.Img
                 className="mt-1"

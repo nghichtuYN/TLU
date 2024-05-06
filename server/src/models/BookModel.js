@@ -23,6 +23,29 @@ const getAllBook = (limit, page) => {
     }
   });
 };
+const getBookFilter = (limit, page, searchValue) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log(searchValue);
+      const skip = page * limit;
+      const pool = await connect();
+      const sqlString = `SELECT b.id,bookName,b.quantity,b.isBorrowed ,c.id 'category_id',c.categoryName,a.id 'authorId',bookImage,a.authorName,ISBNNumber,bookPrice
+      FROM book b inner join category c on b.category_id=c.id inner join author a on b.authorId=a.id
+       WHERE bookName like N'%${searchValue}%' or c.categoryName like N'%${searchValue}%' or a.authorName like N'%${searchValue}%'
+      ORDER BY b.id OFFSET ${skip} ROWS FETCH NEXT ${limit} ROWS ONLY;`;
+      const sqlStringALL = `SELECT b.id,bookName,b.quantity,b.isBorrowed ,c.id 'category_id',c.categoryName,a.id 'authorId',bookImage,a.authorName,ISBNNumber,bookPrice
+      FROM book b inner join category c on b.category_id=c.id inner join author a on b.authorId=a.id
+      WHERE bookName like N'%${searchValue}%' or c.categoryName like N'%${searchValue}%' or a.authorName like N'%${searchValue}%'
+      ORDER BY b.id`;
+      console.log(sqlString);
+      const data = await pool.request().query(sqlString);
+      const total = await pool.request().query(sqlStringALL);
+      resolve({ data: data.recordset, total: total.recordset});
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 const totalBook = () => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -70,7 +93,7 @@ const updateBook = (id, updatedata) => {
   return new Promise(async (resolve, reject) => {
     try {
       const {
-        // bookName,
+        bookName,
         category_id,
         authorId,
         ISBNNumber,
@@ -232,5 +255,6 @@ module.exports = {
   deleteBook,
   findOne,
   totalBook,
-  updateBookInOrder
+  getBookFilter,
+  updateBookInOrder,
 };

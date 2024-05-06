@@ -143,30 +143,50 @@ const ManageStudentPage = () => {
                   ></Button>
                 </MDBModalHeader>
                 <MDBModalBody>
+                  <label>
+                    <span>Mã độc giả</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     onChange={(e) => setStudentCode(e.target.value)}
-                    label="Mã sinh viên"
+                    wrapperClass="mb-4"
                     id="studentCode"
                     type="text"
                   />
+                  <label>
+                    <span>Tên độc giả</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     onChange={(e) => setFullName(e.target.value)}
-                    label="Tên độc giả"
+                    wrapperClass="mb-4"
                     id="fullName"
                     type="text"
                   />
+                  <label>
+                    <span>Email</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     onChange={(e) => setEmail(e.target.value)}
-                    label="Email"
                     id="email"
+                    wrapperClass="mb-4"
                     type="email"
                   />
+                  <label>
+                    <span>Số điện thoại</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     onChange={(e) => setMobileNumber(e.target.value)}
-                    label="Số điện thoại"
+                    wrapperClass="mb-4"
                     id="mobileNumber"
                     type="phone"
                   />
+                  <label >
+                    <span>Trạng thái</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBRadio
                     name="inlineRadio"
                     id="status"

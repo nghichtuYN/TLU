@@ -7,10 +7,12 @@ import { error, success } from "../MessageComponent/MessageComponent";
 import { deleteBook } from "../../services/BookService";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import NotFoundMessageComponent from "../NotFoundMessageComponent/NotFoundMessageComponent";
 export const ManageBookComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
-  const { book, refetch, categoryList, authorList, filterBook } = props;
+  const { book, refetch, categoryList, authorList, filterBook, searchValue } =
+    props;
   const [authorId, setAuthID] = useState(0);
   const [authorName, setAuthorName] = useState("");
   const [bookImage, setBookImage] = useState();
@@ -25,7 +27,9 @@ export const ManageBookComponent = (props) => {
   const handleOpen = (id) => {
     setBasicModal(true);
     if (book) {
-      const selectedBook = book?.find((book) => book?.id === id);
+      const selectedBook = filterBook
+        ? filterBook?.find((book) => book?.id === id)
+        : book?.find((book) => book?.id === id);
       if (selectedBook) {
         setBookID(selectedBook?.id);
         setBookName(selectedBook?.bookName);
@@ -61,12 +65,12 @@ export const ManageBookComponent = (props) => {
   const handleDelete = (id) => {
     mutationDelete.mutate(id);
   };
-  console.log("filterBook", filterBook);
   return (
     <>
       <MDBTableBody>
-        {filterBook && filterBook.length > 0
-          ? filterBook?.map((book) => {
+        {searchValue !== "" ? (
+          filterBook && filterBook.length > 0 ? (
+            filterBook?.map((book) => {
               return (
                 <tr key={book?.id}>
                   <td>
@@ -107,12 +111,12 @@ export const ManageBookComponent = (props) => {
                     </div>
                   </td>
                   <td>
-                    <div className="d-flex align-items-center ">
+                    <div className="d-flex align-items-center justify-content-center ">
                       {book?.quantity}
                     </div>
                   </td>
                   <td>
-                    <div className="d-flex align-items-center ">
+                    <div className="d-flex align-items-center justify-content-center">
                       {book?.isBorrowed}
                     </div>
                   </td>
@@ -122,78 +126,9 @@ export const ManageBookComponent = (props) => {
                       rounded="true"
                       onClick={() => handleOpen(book?.id)}
                     >
-                      Cập nhật
-                    </Button>
-                    <Button
-                      style={{ marginLeft: "5px" }}
-                      variant="danger"
-                      rounded="true"
-                      onClick={() => handleDelete(book?.id)}
-                    >
-                      Xóa
-                    </Button>
-                  </td>
-                </tr>
-              );
-            })
-          : book &&
-            book?.map((book) => {
-              return (
-                <tr key={book?.id}>
-                  <td>
-                    <div className=" align-items-center ">
-                      <img
-                        src={`http://localhost:3001/uploads/${book.bookImage}`}
-                        alt={`${book?.bookImage}`}
-                        style={{ width: "60px", height: "60px" }}
-                      />
-                      <div className="ms-3">
-                        <p className="fw-bold mb-1" title={book?.bookName}>
-                          {book?.bookName}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="d-flex align-items-center">
-                      <div className="ms-3">
-                        <p className="fw-bold mb-1" title={book?.categoryName}>
-                          {book?.categoryName}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="d-flex align-items-center">
-                      <div className="ms-3">
-                        <p className="fw-bold mb-1" title={book?.authorName}>
-                          {book?.authorName}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="d-flex align-items-center ">
-                      {book?.ISBNNumber}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="d-flex align-items-center justify-content-center ">
-                      {book?.quantity}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="d-flex align-items-center justify-content-center ">
-                      {book?.isBorrowed}
-                    </div>
-                  </td>
-                  <td>
-                    <Button
-                      variant="primary"
-                      rounded="true"
-                      onClick={() => handleOpen(book?.id)}
-                    >
-                      <FaRegEdit style={{ fontSize: "20px" }} />
+                      {" "}
+                      {/* <FaRegEdit style={{ fontSize: "20px" }} /> */}
+                      caapj
                     </Button>
                     <Button
                       style={{ marginLeft: "5px" }}
@@ -206,7 +141,89 @@ export const ManageBookComponent = (props) => {
                   </td>
                 </tr>
               );
-            })}
+            })
+          ) : (
+            <tr>
+              <td colSpan={7}>
+                <div className="d-flex justify-content-center align-items-center">
+                  <NotFoundMessageComponent />
+                </div>
+              </td>
+            </tr>
+          )
+        ) : (
+          book &&
+          book?.map((book) => {
+            return (
+              <tr key={book?.id}>
+                <td>
+                  <div className=" align-items-center ">
+                    <img
+                      src={`http://localhost:3001/uploads/${book.bookImage}`}
+                      alt={`${book?.bookImage}`}
+                      style={{ width: "60px", height: "60px" }}
+                    />
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1" title={book?.bookName}>
+                        {book?.bookName}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1" title={book?.categoryName}>
+                        {book?.categoryName}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1" title={book?.authorName}>
+                        {book?.authorName}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center ">
+                    {book?.ISBNNumber}
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center justify-content-center ">
+                    {book?.quantity}
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center justify-content-center ">
+                    {book?.isBorrowed}
+                  </div>
+                </td>
+                <td>
+                  <Button
+                    variant="primary"
+                    rounded="true"
+                    onClick={() => handleOpen(book?.id)}
+                  >
+                    <FaRegEdit style={{ fontSize: "20px" }} />
+                  </Button>
+                  <Button
+                    style={{ marginLeft: "5px" }}
+                    variant="danger"
+                    rounded="true"
+                    onClick={() => handleDelete(book?.id)}
+                  >
+                    <MdDeleteForever style={{ fontSize: "20px" }} />
+                  </Button>
+                </td>
+              </tr>
+            );
+          })
+        )}
       </MDBTableBody>
       {/* Modal */}
       <ModalComponent

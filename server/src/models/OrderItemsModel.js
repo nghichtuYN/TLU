@@ -86,7 +86,7 @@ const findOne = (OrderItemsName) => {
     try {
       const pool = await connect();
       const sqlString =
-        "SELECT * FROM [OrderItems] WHERE OrderItemsName =@OrderItemsName";
+        "SELECT * FROM [orderItems] WHERE OrderItemsName =@OrderItemsName";
       const data = await pool
         .request()
         .input("OrderItemsName", sql.NVarChar, OrderItemsName)
@@ -101,12 +101,28 @@ const deleteOrderItems = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
       const pool = await connect();
-      const sqlString = "DELETE FROM [OrderItems] WHERE id =@id";
+      const sqlString = "DELETE FROM [orderItems] WHERE id =@id";
       const data = await pool
         .request()
         .input("id", sql.Int, id)
         .query(sqlString);
       resolve(data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+const deleteOrderItemsByBookId = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log('orderItems',id)
+      const pool = await connect();
+      const sqlString = "DELETE FROM [orderItems] OUTPUT DELETED.orderId WHERE bookId =@id";
+      const data = await pool
+        .request()
+        .input("id", sql.Int, id)
+        .query(sqlString);
+      resolve(data.recordset);
     } catch (error) {
       reject(error);
     }
@@ -120,4 +136,5 @@ module.exports = {
   deleteOrderItems,
   findOne,
   totalOrderItems,
+  deleteOrderItemsByBookId
 };

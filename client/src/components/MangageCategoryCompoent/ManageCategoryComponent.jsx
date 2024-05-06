@@ -50,8 +50,8 @@ export const ManageCategoryComponent = (props) => {
   return (
     <>
       <MDBTableBody>
-        {!filterCat
-          ? category.map((cat) => {
+        {filterCat && filterCat.length > 0
+          ? filterCat.map((cat) => {
               const formattedDateCreated = format(
                 new Date(cat?.created_at),
                 "dd/MM/yyyy"
@@ -103,7 +103,7 @@ export const ManageCategoryComponent = (props) => {
                 </tr>
               );
             })
-          : filterCat.map((cat) => {
+          : category && category.map((cat) => {
               const formattedDateCreated = format(
                 new Date(cat?.created_at),
                 "dd/MM/yyyy"

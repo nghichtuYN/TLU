@@ -95,7 +95,7 @@ const ModalComponent = (props) => {
     } else if (student) {
       return updateStudent(id, rest);
     } else if (order) {
-      console.log(rest)
+      console.log(rest);
       return updateOrder(id, rest);
     }
   };
@@ -184,15 +184,23 @@ const ModalComponent = (props) => {
             <MDBModalBody>
               {category ? (
                 <div>
-                  <label>Tên danh mục</label>
+                  <label className="mb-1">
+                    <span>Tên danh mục</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     value={categoryName}
+                    wrapperClass="mb-4"
                     onChange={(e) => setCategoryName(e.target.value)}
                     id="categoryName"
                     type="text"
+                    required
                   />
                   <div>
-                    <label>Trạng thái</label>
+                    <label>
+                      <span>Trạng thái</span>
+                      <span style={{ color: "red" }}>*</span>
+                    </label>
                     <MDBRadio
                       name="inlineRadio"
                       id="inlineRadio"
@@ -214,37 +222,37 @@ const ModalComponent = (props) => {
                 </div>
               ) : author ? (
                 <div>
-                  <label>Tên tác giả</label>
+                  <label>
+                    <span>Tên tác giả</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     value={authorName}
                     onChange={(e) => setAuthorName(e.target.value)}
                     id="authorName"
+                    required
                     type="text"
                   />
                 </div>
               ) : book ? (
                 <>
+                  <label>
+                    <span>Tên sách</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     value={bookName}
                     onChange={(e) => setBookName(e.target.value)}
-                    label={
-                      <div>
-                        <span>Tên sách</span>
-                        <span style={{ color: "red" }}>*</span>
-                      </div>
-                    }
                     id="bookName"
                     wrapperClass="mb-4"
                     type="text"
                   />
+                  <label>
+                    <span>Danh mục</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     type="text"
-                    label={
-                      <div>
-                        <span>Danh mục</span>
-                        <span style={{ color: "red" }}>*</span>
-                      </div>
-                    }
                     wrapperClass="mb-4"
                     value={categoryName}
                     onChange={(e) => {
@@ -266,14 +274,12 @@ const ModalComponent = (props) => {
                       <option key={cat?.id} value={cat?.categoryName} />
                     ))}
                   </datalist>
+                  <label>
+                    <span>Tác giả</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     type="text"
-                    label={
-                      <div>
-                        <span>Tác giả</span>
-                        <span style={{ color: "red" }}>*</span>
-                      </div>
-                    }
                     wrapperClass="mb-4"
                     value={authorName}
                     onChange={(e) => {
@@ -281,7 +287,7 @@ const ModalComponent = (props) => {
                         (author) => author.authorName === e.target.value
                       );
                       if (selectedAuthor) {
-                        setAuthID(selectedAuthor._id);
+                        setAuthID(selectedAuthor.id);
                         setAuthorName(selectedAuthor.authorName);
                       } else {
                         setAuthID(0);
@@ -295,46 +301,45 @@ const ModalComponent = (props) => {
                       <option key={author?.id} value={author?.authorName} />
                     ))}
                   </datalist>
+                  <label>
+                    <span>ISBN</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     value={ISBNNumber}
                     onChange={(e) => setISBN_Number(e.target.value)}
-                    label={
-                      <div>
-                        <span>ISBN</span>
-                        <span style={{ color: "red" }}>*</span>
-                      </div>
-                    }
                     id="ISBN"
                     wrapperClass="mb-4"
                     type="text"
                   />
+                  <label>
+                    <span>Đính kèm ảnh</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBFile
-                    label="Đính kèm ảnh"
                     id="customFile"
                     onChange={(e) => setBookImage(e.target.files[0])}
+                    wrapperClass="mb-5"
+                    required
                   />
+                  <label>
+                    <span> Giá</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     onChange={(e) => setBookPrice(e.target.value)}
                     wrapperClass="mb-4"
                     value={bookPrice}
-                    label={
-                      <div>
-                        <span> Giá</span>
-                        <span style={{ color: "red" }}>*</span>
-                      </div>
-                    }
                     id="bookPrice"
                     type="number"
                   />
+                  <label>
+                    <span> Số lượng </span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     onChange={(e) => setQuantity(e.target.value)}
                     value={quantity}
-                    label={
-                      <div>
-                        <span> Số lượng</span>
-                        <span style={{ color: "red" }}>*</span>
-                      </div>
-                    }
                     id="bookQuantity"
                     wrapperClass="mb-4"
                     type="number"
@@ -342,34 +347,54 @@ const ModalComponent = (props) => {
                 </>
               ) : student ? (
                 <div>
+                  <label>
+                    <span>Mã độc giả</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     value={studentCode}
                     onChange={(e) => setStudentCode(e.target.value)}
-                    label="Mã sinh viên"
+                    wrapperClass="mb-4"
                     id="studentCode"
                     type="text"
                   />
+                  <label>
+                    <span>Tên độc giả</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    label="Tên độc giả"
+                    wrapperClass="mb-4"
                     id="fullName"
                     type="text"
-                  />
+                  />{" "}
+                  <label>
+                    <span>Email</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    label="Email"
                     id="email"
+                    wrapperClass="mb-4"
                     type="email"
                   />
+                  <label>
+                    <span>Số điện thoại</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBInput
                     value={mobileNumber}
                     onChange={(e) => setMobileNumber(e.target.value)}
-                    label="Số điện thoại"
+                    wrapperClass="mb-4"
                     id="mobileNumber"
                     type="phone"
                   />
+                  <label className="mx-2">
+                    <span>Trạng thái</span>
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
                   <MDBRadio
                     name="inlineRadio"
                     id="status"
@@ -519,6 +544,8 @@ const ModalComponent = (props) => {
                     : status === undefined && book
                     ? false
                     : status && category
+                    ? false
+                    : status && student
                     ? false
                     : status === undefined
                     ? true

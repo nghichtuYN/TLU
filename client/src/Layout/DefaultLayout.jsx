@@ -9,7 +9,7 @@ const DefaultLayout = ({ children }) => {
     <div>
       {/* <Container fluid> */}
       <HeaderComponent />
-      <Container style={{ marginTop: "20px" }}>
+      <Container style={{ marginTop: "20px", minHeight: "115vh" }}>
         <Row>
           {/* Sidebar */}
           <Col
@@ -38,7 +38,7 @@ const DefaultLayout = ({ children }) => {
 
           {/* Main Content */}
           <Col md={8} style={{ padding: "20px", backgroundColor:'#808080',borderRadius:'15px',width:'70%',marginLeft:'20px'}}>
-            <div style={{ backgroundColor: "#fff", minHeight: "100vh" }}>
+            <div style={{ backgroundColor: "#fff" ,minHeight: "100vh"}}>
               {children}
             </div>
           </Col>
