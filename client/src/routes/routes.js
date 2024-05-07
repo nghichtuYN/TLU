@@ -1,3 +1,4 @@
+import BookDetailPage from "../pages/BookDetailPage/BookDetailPage";
 import HomePage from "../pages/HomePage/HomePage";
 import HomePageStudent from "../pages/HomePageStudent/HomePageStudent";
 import ManageAuthorPage from "../pages/ManageAuthorPage/ManageAuthorPage";
@@ -11,8 +12,8 @@ import SignUpPage from "../pages/SignUpPage/SignUpPage";
 
 export const publicRoute=[
     {path:'/home',component:HomePage,isShowHeader:true},
-    {path:'/',component:SignInPage,isShowHeader:false},
-    {path:'/sign-up',component:SignUpPage,isShowHeader:false},
+    {path:'/',component:SignInPage,noHeader:true},
+    {path:'/sign-up',component:SignUpPage},
     {path:'/profile',component:HomePage,isShowHeader:true},
     {path:'/manage-book',component:ManageBookPage,isShowHeader:true},
     {path:'/manage-author',component:ManageAuthorPage,isShowHeader:true},
@@ -21,5 +22,6 @@ export const publicRoute=[
     {path:'/manage-member',component:ManageMember,isShowHeader:true},
     {path:'/manage-order',component:ManageOrderPage,isShowHeader:true},
     {path:'/home-page',component:HomePageStudent,isShowHeader:false},
+    {path:'/book-detail/:id',component:BookDetailPage,isShowHeader:false},
 
 ]

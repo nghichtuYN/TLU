@@ -190,7 +190,8 @@ const getBookByID = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
       const pool = await connect();
-      const sqlString = `SELECT * FROM [book] WHERE id =@id`;
+      const sqlString = `select b.*,a.authorName,c.categoryName from author a inner join  book b  on b.authorId=a.id inner join category c on b.category_id = c.id
+      where b.id=@id`;
       const data = await pool
         .request()
         .input("id", sql.Int, id)

@@ -5,6 +5,7 @@ import { Container, Col, Row, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { CiLogin } from "react-icons/ci";
+import { SearchComponent } from "../SearchComponent/SearchComponent";
 const HeaderComponent = (props) => {
   const { isShowLogin } = props;
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const HeaderComponent = (props) => {
               cursor: "pointer",
             }}
             onClick={() => {
-              navigate("/");
+              navigate("/home-page");
             }}
           />
         </Col>
@@ -60,7 +61,7 @@ const HeaderComponent = (props) => {
             Library Management System
           </span>
         </Col>
-
+          
         <Col className="col-8 d-flex justify-content-end align-items-center">
           {!isShowLogin ? (
             <div
@@ -99,6 +100,7 @@ const HeaderComponent = (props) => {
               )}
             </div>
           ) : null}
+          {isShowLogin? <SearchComponent/> :null}
         </Col>
       </Row>
     </Container>

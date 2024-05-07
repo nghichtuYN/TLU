@@ -1,13 +1,12 @@
 import DefaultLayout from "./Layout/DefaultLayout";
 import { Route, Routes } from "react-router-dom";
 import { publicRoute } from "./routes/routes";
-import {  useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { getDetailsUser } from "./services/AdminService";
 import { updateMember } from "./redux/Slice/MemberSlice";
 import HomePageLayout from "./Layout/HomePageLayout";
-
 
 const App = () => {
   const dispatch = useDispatch();
@@ -18,12 +17,10 @@ const App = () => {
       const decoded = jwtDecode(storageData);
       if (decoded?.id) {
         handleGetDetailUser(decoded?.id, storageData);
-        
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   const handleGetDetailUser = async (id, token) => {
     const res = await getDetailsUser(id, token);
@@ -34,8 +31,8 @@ const App = () => {
     <div className="App">
       <Routes>
         {publicRoute.map((route, index) => {
-          const Layout = route.isShowHeader ? DefaultLayout : HomePageLayout;
           const Page = route.component;
+          const Layout = route.isShowHeader ? DefaultLayout : route.noHeader ? Fragment : HomePageLayout;
           return (
             <Route
               key={index}
