@@ -1,0 +1,18 @@
+.card-borrowed {
+    opacity: 0.5;
+    /* Điều chỉnh độ trong suốt của card khi sách đã được mượn */
+}
+
+.borrowed-message {
+    position: absolute;
+    top: 50%;
+    /* Căn giữa theo chiều dọc */
+    left: 50%;
+    /* Căn giữa theo chiều ngang */
+    transform: translate(-50%, -50%);
+    /* Di chuyển phần tử về giữa */
+    font-weight: bold;
+    /* In đậm chữ đã được mượn */
+    color: black;
+    font-size: 14px;
+}

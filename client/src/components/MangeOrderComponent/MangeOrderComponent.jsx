@@ -6,10 +6,11 @@ import ModalComponent from "../ModalComponent/ModalComponent";
 import { getDetailsStudent } from "../../services/StudentService";
 import { getDetaislBook } from "../../services/BookService";
 import { FaRegEdit } from "react-icons/fa";
+import NotFoundMessageComponent from "../NotFoundMessageComponent/NotFoundMessageComponent";
 const ManageOrderComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
-  const { order, refetch,refetchBook } = props;
+  const { order, refetch, refetchBook, filterOrder, searchValue } = props;
   const [detailStudent, setDetailStudent] = useState([]);
   const [orderId, setOrderId] = useState("");
   const [orderItems, setOrderItems] = useState([]);
@@ -32,21 +33,23 @@ const ManageOrderComponent = (props) => {
       const detailBook = await getDetailBook(id);
       if (detailBook) {
         if (!orderItems.find((item) => item.id === detailBook.id)) {
-          setOrderItems(prevOrderItems => [...prevOrderItems, detailBook]);
+          setOrderItems((prevOrderItems) => [...prevOrderItems, detailBook]);
         }
       }
-    }); 
+    });
   };
 
   const handleOpen = async (id) => {
     setBasicModal(true);
     if (order) {
-      const selectedOrder = order?.find((order) => order?.id === id);
+      const selectedOrder = filterOrder
+        ? filterOrder?.find((order) => order?.id === id)
+        : order?.find((order) => order?.id === id);
       if (selectedOrder) {
         setOrderId(selectedOrder?.id);
-        const student= await getDetailStudent(selectedOrder?.UserId)
+        const student = await getDetailStudent(selectedOrder?.UserId);
         setDetailStudent(student);
-        getOrderItems(selectedOrder)
+        getOrderItems(selectedOrder);
         const formattedBorrowDate = selectedOrder?.borrowDate
           ? format(new Date(selectedOrder?.borrowDate), "dd/MM/yyyy")
           : "";
@@ -60,22 +63,22 @@ const ManageOrderComponent = (props) => {
     }
   };
 
-
   return (
     <>
       <MDBTableBody>
-        {order
-          ? order?.map((order) => {
-            const formattedDateCreated = order?.borrowDate
-            ? format(new Date(order?.borrowDate), "dd/MM/yyyy")
-            : "";
+        {searchValue !== "" ? (
+          filterOrder && filterOrder?.length > 0 ? (
+            filterOrder?.map((order) => {
+              const formattedDateCreated = order?.borrowDate
+                ? format(new Date(order?.borrowDate), "dd/MM/yyyy")
+                : "";
               const formattedDateReturn = order?.returnDate
                 ? format(new Date(order?.returnDate), "dd/MM/yyyy")
                 : "Chưa trả";
               const bookArray = order?.BookNames
                 ? order?.BookNames.split(",")
                 : "không có gì";
-                // console.log('bookArray',bookArray)
+              // console.log('bookArray',bookArray)
               const isbnArray = order?.ISBNNumbers
                 ? order?.ISBNNumbers.split(",")
                 : "không có gì";
@@ -140,6 +143,106 @@ const ManageOrderComponent = (props) => {
                     </div>
                   </td>
                   <td>
+                    <div className="d-flex align-items-center justify-content-center">
+                      <Button
+                        disabled={order?.returnStatus}
+                        variant="primary"
+                        rounded="true"
+                        onClick={() => handleOpen(order?.id)}
+                      >
+                        <FaRegEdit style={{ fontSize: "20px" }} />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td colSpan={7}>
+                <div className="d-flex justify-content-center align-items-center">
+                  <NotFoundMessageComponent />
+                </div>
+              </td>
+            </tr>
+          )
+        ) : (
+          order &&
+          order?.map((order) => {
+            const formattedDateCreated = order?.borrowDate
+              ? format(new Date(order?.borrowDate), "dd/MM/yyyy")
+              : "";
+            const formattedDateReturn = order?.returnDate
+              ? format(new Date(order?.returnDate), "dd/MM/yyyy")
+              : "Chưa trả";
+            const bookArray = order?.BookNames
+              ? order?.BookNames.split(",")
+              : "không có gì";
+            // console.log('bookArray',bookArray)
+            const isbnArray = order?.ISBNNumbers
+              ? order?.ISBNNumbers.split(",")
+              : "không có gì";
+            return (
+              <tr key={order?.id}>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1" title={order?.studentCode}>
+                        {order?.studentCode}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1" title={order?.fullName}>
+                        {order?.fullName}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  {bookArray.map((items, index) => {
+                    return (
+                      <div key={index} className="d-flex align-items-center">
+                        <div className="ms-3">
+                          <p className="fw-bold mb-1" title={items}>
+                            {items}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </td>
+                <td>
+                  {isbnArray.map((items, index) => {
+                    return (
+                      <div key={index} className="d-flex align-items-center">
+                        <div className="ms-3">
+                          <p className="fw-bold mb-1" title={items}>
+                            {items}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </td>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1">{formattedDateCreated}</p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1">{formattedDateReturn}</p>
+                    </div>
+                  </div>
+                </td>
+                <td>
                   <div className="d-flex align-items-center justify-content-center">
                     <Button
                       disabled={order?.returnStatus}
@@ -147,18 +250,18 @@ const ManageOrderComponent = (props) => {
                       rounded="true"
                       onClick={() => handleOpen(order?.id)}
                     >
-                      <FaRegEdit style={{fontSize:'20px'}}/>
+                      <FaRegEdit style={{ fontSize: "20px" }} />
                     </Button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })
-          : null}
+                  </div>
+                </td>
+              </tr>
+            );
+          })
+        )}
       </MDBTableBody>
       {/* Modal */}
       <ModalComponent
-      refetchBook={refetchBook}
+        refetchBook={refetchBook}
         status={status}
         setStatus={setStatus}
         setOrderItems={setOrderItems}

@@ -9,6 +9,7 @@ import ManageOrderPage from "../pages/ManageOrderPage/ManageOrderPage";
 import ManageStudentPage from "../pages/ManageStudentPage/ManageStudentPage";
 import SignInPage from "../pages/SignInPage/SignInPage";
 import SignUpPage from "../pages/SignUpPage/SignUpPage";
+import TypeCategoryPage from "../pages/TypeCategoryPage/TypeCategoryPage";
 
 export const publicRoute=[
     {path:'/home',component:HomePage,isShowHeader:true},
@@ -23,5 +24,6 @@ export const publicRoute=[
     {path:'/manage-order',component:ManageOrderPage,isShowHeader:true},
     {path:'/home-page',component:HomePageStudent,isShowHeader:false},
     {path:'/book-detail/:id',component:BookDetailPage,isShowHeader:false},
-
+    {path:'/category',component:TypeCategoryPage,isShowHeader:false},
+    
 ]

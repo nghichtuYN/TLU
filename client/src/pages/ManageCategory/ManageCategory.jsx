@@ -13,7 +13,11 @@ import {
   MDBRadio,
 } from "mdb-react-ui-kit";
 import PaginationComponent from "../../components/PaginationComponent/PaginationComponent";
-import { addCategory, getAllCategories } from "../../services/CategoryService";
+import {
+  addCategory,
+  getAllCategories,
+  getFilterCategory,
+} from "../../services/CategoryService";
 import { useLocation } from "react-router-dom";
 import { useMutationHook, useQueryHook } from "../../Hook/useMutationHook";
 import {
@@ -23,6 +27,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
 import { BiSolidCategory } from "react-icons/bi";
+import { SearchComponent } from "../../components/SearchComponent/SearchComponent";
 
 const ManageCategory = () => {
   const location = useLocation();
@@ -35,7 +40,8 @@ const ManageCategory = () => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(!basicModal);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [searchValue, setSearchValue] = useState("");
+  const [filterCategory, setFilterCategory] = useState([]);
   const getAllCategory = () => {
     setIsLoading(true);
     return new Promise((resolve, reject) => {
@@ -54,15 +60,34 @@ const ManageCategory = () => {
     ["category", page],
     getAllCategory
   );
+  const getCategoriesFilter = (searchValue) => {
+    setIsLoading(true)
+    setTimeout(async () => {
+      const res = await getFilterCategory(5, page - 1, searchValue);
+      setFilterCategory(res.data);
+      setIsLoading(false)
+    }, 500);
+  };
   useEffect(() => {
     if (category?.data.length === 0) {
       navigate(
         `/manage-category?pages=${Math.max(page - 1, 1)}&limits=${limit}`
       );
-      console.log("UseEffect");
+    }
+    if (searchValue !== "") {
+      getCategoriesFilter(searchValue);
+      if (filterCategory?.totalPage <= 1) {
+      navigate(`/manage-category?pages=${1}&limits=${limit}`);
+      }
+    }
+    if (searchValue === "") {
+      setFilterCategory([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, page]);
+  }, [category, page, searchValue]);
+  const onChange = (e) => {
+    setSearchValue(e.target.value);
+  };
   const onSuccessFn = (data, mes) => {
     refetch();
     success(mes);
@@ -106,16 +131,43 @@ const ManageCategory = () => {
           <Button onClick={toggleOpen}>Thêm Danh mục</Button>
         </div>
         <div className="d-flex flex-column">
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ flex: 1 }}>
+              <SearchComponent
+                value={searchValue}
+                onChange={onChange}
+                placeholder={"Tìm kiếm danh mục"}
+              />
+            </div>
+            {filterCategory && filterCategory?.data?.length > 0 ? (
+              <p style={{ fontSize: "20px" }}>
+                {filterCategory?.total} kết quả
+              </p>
+            ) : null}
+          </div>
           {isLoading ? (
             <SpinnerComponent />
           ) : (
             <div>
-              <TableComponent category={category?.data} refetch={refetch} />
+              <TableComponent
+                category={category?.data}
+                filterCategory={filterCategory?.data}
+                searchValue={searchValue}
+                refetch={refetch}
+              />
               <div className="d-flex justify-content-end">
                 <PaginationComponent
                   isCategory={true}
-                  totalPage={category?.totalPage}
-                  pageCurrent={category?.pageCurrent}
+                  totalPage={
+                    filterCategory?.length === 0
+                      ? category?.totalPage
+                      : filterCategory?.totalPage
+                  }
+                  pageCurrent={
+                    filterCategory?.length === 0
+                      ? category?.pageCurrent
+                      : filterCategory?.pageCurrent
+                  }
                   limit={limit}
                 />
               </div>
@@ -161,7 +213,7 @@ const ManageCategory = () => {
                   value="false"
                   label="Ẩn"
                   onChange={(e) => setStatus(e.target.value)}
-                  style={{ marginLeft: "3px" }} 
+                  style={{ marginLeft: "3px" }}
                   inline
                 />
                 <MDBRadio

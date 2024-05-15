@@ -5,9 +5,15 @@ export const getAllBooks = async (limit = 0, page = 0) => {
   );
   return res;
 };
+export const getBookByCategory = async (limit = 0, page = 0,id) => {
+  const res = await axios.get(
+    `http://localhost:3001/api/book/getBookByCategory?page=${page}&limit=${limit}&cat=${id}`
+  );
+  return res;
+};
 export const getBookFilter = async (limit = 0, page = 0,searchValue) => {
-  const res = await axios.post(
-    `http://localhost:3001/api/book/getBookFilter?page=${page}&limit=${limit}`,searchValue
+  const res = await axios.get(
+    `http://localhost:3001/api/book/getBookFilter/${searchValue}?page=${page}&limit=${limit}`
   );
   return res;
 };

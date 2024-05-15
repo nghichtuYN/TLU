@@ -56,7 +56,8 @@ const NavbarCompoent = () => {
   }
   return (
     <Nav
-      defaultActiveKey="/home"
+    variant="underline" defaultActiveKey="/home"
+
       className="flex-column"
       style={{
         height: "100%",
@@ -71,6 +72,7 @@ const NavbarCompoent = () => {
         return (
           <div key={index}>
             <NavLink
+            eventKey={item?.path}
               onClick={(e)=>handldPath(e,item.path)}
               style={{ textDecoration: "none", color: "black" }}
             >

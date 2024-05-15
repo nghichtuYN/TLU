@@ -12,6 +12,12 @@ export const addAuthor = async (data) => {
   );
   return res.data;
 };
+export const getFilterAuthor = async (limit = 0, page = 0,searchValue) => {
+  const res = await axios.get(
+    `http://localhost:3001/api/author/getFilterAuthor/${searchValue}?page=${page}&limit=${limit}`
+  );
+  return res;
+};
 export const updateAuthor = async (id, data) => {
   const res = await axios.put(
     `http://localhost:3001/api/author/update-author/${id}`,

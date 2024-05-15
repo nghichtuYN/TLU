@@ -15,6 +15,25 @@ const getAllStudent = (limit, page) => {
     }
   });
 };
+const getFilterStudentByCode = (limit, page, searchValue) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      searchValue = searchValue.trim();
+      const skip = page * limit;
+      const pool = await connect();
+      const sqlString = `SELECT * FROM [user]
+       WHERE studentCode like N'%${searchValue}%' AND studentCode IS NOT NULL
+      ORDER BY id OFFSET ${skip} ROWS FETCH NEXT ${limit} ROWS ONLY;`;
+      const sqlStringALL = `SELECT * FROM [user]
+      WHERE studentCode like N'%${searchValue}%' AND studentCode IS NOT NULL `;
+      const data = await pool.request().query(sqlString);
+      const total = await pool.request().query(sqlStringALL);
+      resolve({ data: data.recordset, total: total.recordset });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 const totalStudent = () => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -118,7 +137,6 @@ const deleteStudent = (id) => {
   });
 };
 module.exports = {
-  
   getAllStudent,
   createStudent,
   getStudentByID,
@@ -126,4 +144,5 @@ module.exports = {
   deleteStudent,
   findOne,
   totalStudent,
+  getFilterStudentByCode,
 };

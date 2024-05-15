@@ -19,11 +19,16 @@ import {
 import { Button } from "react-bootstrap";
 import TableComponent from "../../components/TableComponent/TableComponent";
 import PaginationComponent from "../../components/PaginationComponent/PaginationComponent";
-import { addOrder, getAllOrders } from "../../services/OrderService";
+import {
+  addOrder,
+  getAllOrders,
+  getFilterOrder,
+} from "../../services/OrderService";
 import { getAllBooks } from "../../services/BookService";
 import { getAllStudents } from "../../services/StudentService";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
 import { MdOutlineEditNote } from "react-icons/md";
+import { SearchComponent } from "../../components/SearchComponent/SearchComponent";
 
 const ManageOrderPage = () => {
   const location = useLocation();
@@ -42,6 +47,9 @@ const ManageOrderPage = () => {
   // eslint-disable-next-line no-unused-vars
   const [returnDate, setReturnDate] = useState(Date);
   const [studentExist, setStudentExist] = useState(true);
+  const [searchValue, setSearchValue] = useState("");
+  const [filterOrder, setFilterOrder] = useState([]);
+  const [returnStatus,setReturnStatus]=useState(false)
   const getAllOrder = async () => {
     setIsLoading(true);
     return new Promise((resolve, reject) => {
@@ -55,6 +63,18 @@ const ManageOrderPage = () => {
         }
       }, 500);
     });
+  };
+  const onChangeReturnStatus=(e)=>{
+    setReturnStatus(e.target.value)
+  }
+  console.log('returnStatus',returnStatus)
+  const getFilterOrders = (searchValue) => {
+    setIsLoading(true);
+    setTimeout(async () => {
+      const res = await getFilterOrder(5, page - 1, searchValue);
+      setFilterOrder(res.data);
+      setIsLoading(false);
+    }, 500);
   };
   const { data: order, refetch: refetchOrder } = useQueryHook(
     ["order", page],
@@ -73,13 +93,25 @@ const ManageOrderPage = () => {
 
     return res.data;
   };
+  const onChange = (e) => {
+    setSearchValue(e.target.value);
+  };
   const { data: student } = useQueryHook(["student"], getAllStudent);
   useEffect(() => {
     if (order?.data.length === 0) {
       navigate(`/manage-order?pages=${Math.max(page - 1, 1)}&limits=${limit}`);
     }
+    if (searchValue !== "") {
+      getFilterOrders(searchValue);
+      if (filterOrder?.totalPage <= 1) {
+        navigate(`/manage-order?pages=${1}&limits=${limit}`);
+      }
+    }
+    if (searchValue === "") {
+      setFilterOrder([]);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [order, page, student, book]);
+  }, [order, page, student, book, searchValue]);
   const handleInputChange = async (e) => {
     const bookName = e.target.value;
     const selectedBook = book?.data.find((book) => book?.bookName === bookName);
@@ -176,6 +208,30 @@ const ManageOrderPage = () => {
           </Button>
         </div>
         <div className="d-flex flex-column">
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ flex: 1 }}>
+              <SearchComponent
+                value={searchValue}
+                onChange={onChange}
+                placeholder={"Tìm kiếm tác giả"}
+              />
+            </div>
+            <div>
+              <select
+                onChange={onChangeReturnStatus}
+                id="studentCode"
+                className="form-select"
+                required
+              >
+                <option value="">--Tất cả--</option>
+               <option value={1}>--Đã trả--</option>
+               <option value={0}>--Chưa trả--</option>
+              </select>
+            </div>
+            {filterOrder && filterOrder.data?.length > 0 ? (
+              <p style={{ fontSize: "20px" }}>{filterOrder?.total} kết quả</p>
+            ) : null}
+          </div>
           {isLoading ? (
             <SpinnerComponent />
           ) : (
@@ -184,12 +240,22 @@ const ManageOrderPage = () => {
                 order={order?.data}
                 refetch={refetchOrder}
                 refetchBook={refetchBook}
+                filterOrder={filterOrder?.data}
+                searchValue={searchValue}
               />
               <div className="d-flex justify-content-end">
                 <PaginationComponent
                   isOrder={true}
-                  totalPage={order?.totalPage}
-                  pageCurrent={order?.pageCurrent}
+                  totalPage={
+                    filterOrder?.length === 0
+                      ? order?.totalPage
+                      : filterOrder?.totalPage
+                  }
+                  pageCurrent={
+                    filterOrder?.length === 0
+                      ? order?.pageCurrent
+                      : filterOrder?.pageCurrent
+                  }
                   limit={limit}
                 />
               </div>
@@ -287,7 +353,7 @@ const ManageOrderPage = () => {
                           >
                             {book?.bookName}{" "}
                             {book?.quantity === book.isBorrowed ? (
-                              <div style={{color:'red'}}>(hết sách)</div>
+                              <div style={{ color: "red" }}>(hết sách)</div>
                             ) : null}
                           </option>
                         );

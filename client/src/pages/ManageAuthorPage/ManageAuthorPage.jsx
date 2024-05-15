@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { addAuthor, getAllAuthor } from "../../services/AuthorService";
+import {
+  addAuthor,
+  getAllAuthor,
+  getFilterAuthor,
+} from "../../services/AuthorService";
 import { useMutationHook, useQueryHook } from "../../Hook/useMutationHook";
 import {
   error,
@@ -22,6 +26,7 @@ import TableComponent from "../../components/TableComponent/TableComponent";
 import PaginationComponent from "../../components/PaginationComponent/PaginationComponent";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
 import { SiComposer } from "react-icons/si";
+import { SearchComponent } from "../../components/SearchComponent/SearchComponent";
 
 const ManageAuthorPage = () => {
   const location = useLocation();
@@ -33,8 +38,11 @@ const ManageAuthorPage = () => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(!basicModal);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [filterAuthor, setFilterAuthor] = useState([]);
+
   const getAllAuthors = () => {
-    setIsLoading(true); // Hiển thị hiệu ứng loading
+    setIsLoading(true);
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         try {
@@ -51,12 +59,29 @@ const ManageAuthorPage = () => {
     ["author", page],
     getAllAuthors
   );
+  const getAuthorFilters = (searchValue) => {
+    setIsLoading(true)
+    setTimeout(async () => {
+      const res = await getFilterAuthor(5, page - 1, searchValue);
+      setFilterAuthor(res.data);
+      setIsLoading(false)
+    }, 500);
+  };
   useEffect(() => {
     if (author?.data.length === 0) {
       navigate(`/manage-author?pages=${Math.max(page - 1, 1)}&limits=${limit}`);
     }
+    if (searchValue !== "") {
+      getAuthorFilters(searchValue);
+      if (filterAuthor?.totalPage <= 1) {
+      navigate(`/manage-author?pages=${1}&limits=${limit}`);
+      }
+    }
+    if (searchValue === "") {
+      setFilterAuthor([]);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [author, page]);
+  }, [author, page, searchValue]);
   const onSuccessFn = (data, mes) => {
     refetch();
     success(mes);
@@ -79,6 +104,9 @@ const ManageAuthorPage = () => {
     }
     muationAdd.mutate({ authorName });
     toggleOpen();
+  };
+  const onChange = (e) => {
+    setSearchValue(e.target.value);
   };
   return (
     <div>
@@ -104,16 +132,41 @@ const ManageAuthorPage = () => {
           <Button onClick={toggleOpen}>Thêm tác giả</Button>
         </div>
         <div className="d-flex flex-column">
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ flex: 1 }}>
+              <SearchComponent
+                value={searchValue}
+                onChange={onChange}
+                placeholder={"Tìm kiếm tác giả"}
+              />
+            </div>
+            {filterAuthor && filterAuthor.data?.length > 0 ? (
+              <p style={{ fontSize: "20px" }}>{filterAuthor?.total} kết quả</p>
+            ) : null}
+          </div>
           {isLoading ? (
             <SpinnerComponent />
           ) : (
             <div>
-              <TableComponent author={author?.data} refetch={refetch} />
+              <TableComponent
+                author={author?.data}
+                filterAuthor={filterAuthor?.data}
+                refetch={refetch}
+                searchValue={searchValue}
+              />
               <div className="d-flex justify-content-end">
                 <PaginationComponent
                   isAuthor={true}
-                  totalPage={author?.totalPage}
-                  pageCurrent={author?.pageCurrent}
+                  totalPage={
+                    filterAuthor?.length === 0
+                      ? author?.totalPage
+                      : filterAuthor?.totalPage
+                  }
+                  pageCurrent={
+                    filterAuthor?.length === 0
+                      ? author?.pageCurrent
+                      : filterAuthor?.pageCurrent
+                  }
                   limit={limit}
                 />
               </div>

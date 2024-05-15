@@ -2,8 +2,8 @@ const OrderServices = require("../services/OrderService");
 
 const createOrder = async (req, res) => {
   try {
-    const {userId } = req.body;
-    if ( !userId ) {
+    const { userId } = req.body;
+    if (!userId) {
       return res.status(200).json({
         status: "ERR",
         message: "Nhập đầy đủ thông tin",
@@ -20,8 +20,27 @@ const createOrder = async (req, res) => {
 };
 const getAllOrder = async (req, res) => {
   try {
-    const {limit,page}=req.query
-    const response = await OrderServices.getAllOrder(Number(limit),Number(page));
+    const { limit, page } = req.query;
+    const response = await OrderServices.getAllOrder(
+      Number(limit),
+      Number(page)
+    );
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
+const getFilterOrder = async (req, res) => {
+  try {
+    const { limit, page } = req.query;
+    const key = req.params.key;
+    const response = await OrderServices.getFilterOrder(
+      Number(limit),
+      Number(page),
+      key
+    );
     return res.status(200).json(response);
   } catch (error) {
     return res.status(404).json({
@@ -86,4 +105,5 @@ module.exports = {
   updateOrder,
   deleteOrder,
   getDetailsOrder,
+  getFilterOrder,
 };

@@ -33,7 +33,7 @@ const getAllAuthor = async (req, res) => {
 const updateAuthor = async (req, res) => {
   try {
     const authorId = req.params.id;
-  
+
     if (!authorId) {
       return res.status(200).json({
         status: "ERR",
@@ -66,6 +66,24 @@ const getDetailsAuthor = async (req, res) => {
     });
   }
 };
+const getFilterAuthor = async (req, res) => {
+  try {
+    const { limit, page } = req.query;
+    const key = req.params.key;
+    if (!key) {
+      return res.status(200).json({
+        status: "ERR",
+        message: "the key is required",
+      });
+    }
+    const response = await AuthorServices.getFilterAuthor(Number(limit), Number(page),key);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
 const deleteAuthor = async (req, res) => {
   try {
     const authorId = req.params.id;
@@ -89,4 +107,5 @@ module.exports = {
   updateAuthor,
   deleteAuthor,
   getDetailsAuthor,
+  getFilterAuthor,
 };

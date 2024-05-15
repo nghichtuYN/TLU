@@ -15,7 +15,9 @@ const PaginationComponent = (props) => {
     isCategory,
     isBook,
     isStudent,
-    isOrder,
+    isOrder,isBookByCategory,catId,
+    categoryName,
+    isFilterBookBySearch
   } = props;
   const totalPages = (totalPage) => {
     return Array.from({ length: totalPage }, (_, index) => index);
@@ -43,6 +45,11 @@ const PaginationComponent = (props) => {
                 navigate(`/manage-student?pages=${index + 1}&limits=${limit}`);
               }else if (isOrder) {
                 navigate(`/manage-order?pages=${index + 1}&limits=${limit}`);
+              }
+              else if (isBookByCategory) {
+                navigate(`/category/?pages=${index + 1}&limits=${limit}&cat=${catId}`,{state:categoryName});
+              }else if (isFilterBookBySearch) {
+                navigate(`/home-page?pages=${index + 1}&limits=${limit}`);
               }
             }}
             style={{ cursor: "pointer" }}
@@ -83,6 +90,10 @@ const PaginationComponent = (props) => {
                 navigate(`/manage-student?pages=${i}&limits=${limit}`);
               }else if (isOrder) {
                 navigate(`/manage-order?pages=${i}&limits=${limit}`);
+              }else if (isBookByCategory) {
+                navigate(`/category/?pages=${i}&limits=${limit}&cat=${catId}`,{state:categoryName});
+              }else if (isFilterBookBySearch) {
+                navigate(`/home-page?pages=${i}&limits=${limit}`);
               }
             }}
             style={{ cursor: "pointer" }}
@@ -141,6 +152,10 @@ const PaginationComponent = (props) => {
                 navigate(
                   `/manage-order?pages=${pageCurrent - 1}&limits=${limit}`
                 );
+              }else if (isBookByCategory) {
+                navigate(`/category/?pages=${pageCurrent - 1}&limits=${limit}&cat=${catId}`,{state:categoryName});
+              }else if (isFilterBookBySearch) {
+                navigate(`/home-page?pages=${pageCurrent - 1}&limits=${limit}`);
               }
             }}
             style={{ cursor: "pointer" }}
@@ -172,6 +187,10 @@ const PaginationComponent = (props) => {
                 navigate(
                   `/manage-order?pages=${pageCurrent + 1}&limits=${limit}`
                 );
+              }else if (isBookByCategory) {
+                navigate(`/category/?pages=${pageCurrent + 1}&limits=${limit}&cat=${catId}`,{state:categoryName});
+              }else if (isFilterBookBySearch) {
+                navigate(`/home-page?pages=${pageCurrent + 1}&limits=${limit}`);
               }
             }}
             style={{ cursor: "pointer" }}

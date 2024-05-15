@@ -84,6 +84,23 @@ const getAllStudent = (limit, page) => {
     }
   });
 };
+const getFilterStudentByCode = (limit, page,stuCode) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const {data,total} = await Student.getFilterStudentByCode(limit,page,stuCode)
+      resolve({
+        status: "OK",
+        message: "GET SUCCESS",
+        data: data,
+        total: total.length,
+        pageCurrent: Number(page + 1),
+        totalPage: Math.ceil(total.length / limit),
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 const getDetailsStudent = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -103,5 +120,5 @@ module.exports = {
   updateStudent,
   deleteStudent,
   getAllStudent,
-  getDetailsStudent,
+  getDetailsStudent,getFilterStudentByCode
 };

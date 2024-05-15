@@ -2,14 +2,16 @@ const { Date, DateTime } = require("msnodesqlv8");
 const { connect, sql } = require("../connectdb");
 const moment = require("moment");
 
-const getAllAuthor = (limit, page ) => {
+const getAllAuthor = (limit, page) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const skip = (page * limit);
+      const skip = page * limit;
       const pool = await connect();
       const sqlString = `SELECT *FROM [author] ORDER BY [id] OFFSET ${skip} ROWS FETCH NEXT ${limit} ROWS ONLY;`;
       const sqlStringALL = `SELECT *FROM [author]`;
-      const data = await pool.request().query(limit !==0 ? sqlString : sqlStringALL);
+      const data = await pool
+        .request()
+        .query(limit !== 0 ? sqlString : sqlStringALL);
       resolve(data.recordset);
     } catch (error) {
       reject(error);
@@ -60,6 +62,25 @@ const updateAuthor = (id, updatedata) => {
         .input("id", sql.Int, id)
         .query(sqlString);
       resolve(data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+const getFilterAuthor = (limit, page, searchValue) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      searchValue = searchValue.trim();
+      const skip = page * limit;
+      const pool = await connect();
+      const sqlString = `SELECT * FROM author
+       WHERE authorName like N'%${searchValue}%' 
+      ORDER BY id OFFSET ${skip} ROWS FETCH NEXT ${limit} ROWS ONLY;`;
+      const sqlStringALL = `SELECT * FROM author
+      WHERE authorName like N'%${searchValue}%' `;
+      const data = await pool.request().query(sqlString);
+      const total = await pool.request().query(sqlStringALL);
+      resolve({ data: data.recordset, total: total.recordset });
     } catch (error) {
       reject(error);
     }
@@ -119,4 +140,5 @@ module.exports = {
   deleteAuthor,
   findOne,
   totalAuthor,
+  getFilterAuthor,
 };

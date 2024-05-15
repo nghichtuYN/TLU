@@ -5,6 +5,12 @@ export const getAllOrders= async (limit=0, page=0) => {
   );
   return res;
 };
+export const getFilterOrder= async (limit=0, page=0,searchValue) => {
+  const res = await axios.get(
+    `http://localhost:3001/api/order/getFilterOrder/${searchValue}?page=${page}&limit=${limit}`
+  );
+  return res;
+};
 export const addOrder= async (data) => {
   const res = await axios.post(
     `http://localhost:3001/api/order/create-order`,

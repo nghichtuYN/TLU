@@ -10,7 +10,7 @@ const createCategory = (newCategory) => {
           message: "The CategoryName is already",
         });
       } else {
-        const createdCategory = await Category.createCategory(newCategory)
+        const createdCategory = await Category.createCategory(newCategory);
         if (createdCategory) {
           resolve({
             status: "OK",
@@ -28,7 +28,7 @@ const getAllCategory = (limit, page) => {
   return new Promise(async (resolve, reject) => {
     try {
       const totalCat = await Category.totalCategory();
-      const allCategory = await Category.getAllCategory(limit,page)
+      const allCategory = await Category.getAllCategory(limit, page);
       resolve({
         status: "OK",
         message: "GET SUCCESS",
@@ -36,6 +36,27 @@ const getAllCategory = (limit, page) => {
         total: totalCat,
         pageCurrent: Number(page + 1),
         totalPage: Math.ceil(totalCat / limit),
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+const getFilterCategory = (limit, page, key) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { data, total } = await Category.getFilterCategory(
+        limit,
+        page,
+        key
+      );
+      resolve({
+        status: "OK",
+        message: "GET SUCCESS",
+        data: data,
+        total: total.length,
+        pageCurrent: Number(page + 1),
+        totalPage: Math.ceil(total.length / limit),
       });
     } catch (error) {
       reject(error);
@@ -80,7 +101,7 @@ const getDetailsCategory = (id) => {
 const deleteCategory = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const checkCategory = await Category.getCategoryByID(id)
+      const checkCategory = await Category.getCategoryByID(id);
       if (checkCategory === undefined) {
         resolve({
           status: "ERR",
@@ -103,4 +124,5 @@ module.exports = {
   updateCategory,
   deleteCategory,
   getDetailsCategory,
+  getFilterCategory,
 };

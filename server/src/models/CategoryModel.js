@@ -16,6 +16,25 @@ const getAllCategory = (limit, page) => {
     }
   });
 };
+const getFilterCategory = (limit, page,searchValue) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const skip = page * limit;
+      searchValue=searchValue.trim()
+      const pool = await connect();
+      const sqlString = `SELECT *FROM [category]
+      WHERE categoryName like N'%${searchValue}%'
+       ORDER BY id OFFSET ${skip} ROWS FETCH NEXT ${limit} ROWS ONLY;`;
+      const sqlStringALL = `SELECT *FROM [category]
+      WHERE categoryName like N'%${searchValue}%'`;
+      const data = await pool.request().query( sqlString );
+      const total=await pool.request().query(sqlStringALL)
+      resolve({data: data.recordset,total:total.recordset});
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 const totalCategory = () => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -121,4 +140,5 @@ module.exports = {
   deleteCategory,
   findOne,
   totalCategory,
+  getFilterCategory
 };

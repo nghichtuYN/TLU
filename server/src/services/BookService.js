@@ -44,6 +44,23 @@ const getAllBook = (limit, page) => {
     }
   });
 };
+const getBookByCategory = (limit, page,catId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const {data,total} = await Book.getBookByCategory(limit,page,catId)
+      resolve({
+        status: "OK",
+        message: "GET SUCCESS",
+        data: data,
+        total: total,
+        pageCurrent: Number(page + 1),
+        totalPage: Math.ceil(total / limit),
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 const getBookFilter = (limit, page,searchValue) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -126,5 +143,6 @@ module.exports = {
   updateBook,
   deleteBook,
   getDetailsBook,
-  getBookFilter
+  getBookFilter,
+  getBookByCategory
 };

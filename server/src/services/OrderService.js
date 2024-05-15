@@ -42,6 +42,23 @@ const getAllOrder = (limit, page) => {
     }
   });
 };
+const getFilterOrder = (limit, page, key) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { data, total } = await Order.getFilterOrder(limit, page, key);
+      resolve({
+        status: "OK",
+        message: "SUCCESS",
+        data: data,
+        total: total.length,
+        pageCurrent: Number(page + 1),
+        totalPage: Math.ceil(total.length / limit),
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 const updateOrder = (id, dataUpdate) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -108,4 +125,5 @@ module.exports = {
   updateOrder,
   deleteOrder,
   getDetailsOrder,
+  getFilterOrder,
 };

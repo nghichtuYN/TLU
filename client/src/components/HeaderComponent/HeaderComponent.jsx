@@ -3,23 +3,30 @@ import logo from "../../asset/logo/Logo.png";
 import { MdOutlineAccountCircle } from "react-icons/md";
 import { Container, Col, Row, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CiLogin } from "react-icons/ci";
 import { SearchComponent } from "../SearchComponent/SearchComponent";
+import { searchBook } from "../../redux/Slice/BookSlice";
 const HeaderComponent = (props) => {
-  const { isShowLogin } = props;
+  const { isShowLogin,searchValue,setSearchValue } = props;
   const navigate = useNavigate();
   const handleLogin = () => {
     navigate("/sign-in");
   };
+  const dispatch = useDispatch();
+  const placeHolderBookName="Nhập tên sách cần tìm"
   const member = useSelector((state) => state.member);
+  const onChange = (e) => {
+    setSearchValue(e.target.value);
+    dispatch(searchBook(e.target.value));
+  };
   return (
     <Container
       style={{
         height: "90px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+          display: "flex",
+          justifyContent: "start",
+          alignItems: "center",
         backgroundColor: "#C9BDBD",
         borderRadius: "3px",
       }}
@@ -28,18 +35,18 @@ const HeaderComponent = (props) => {
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "start",
           width: "100%",
         }}
       >
-        <Col className="col-1 d-flex justify-content-end">
+        <Col className="col-lg-2 col-md-2 col-xxl-1 d-flex justify-content-end  ">
           <Image
             src={logo}
             style={{
-              width: "70px",
-              height: "100px",
-              paddingBottom: "20px",
+              width: "80%",
+              height: "80px", 
               cursor: "pointer",
+              objectFit: "contain",
             }}
             onClick={() => {
               navigate("/home-page");
@@ -47,26 +54,36 @@ const HeaderComponent = (props) => {
           />
         </Col>
         <Col
-          className="col-2"
+          className="col-lg-2 col-md-2 col-xxl-2 d-flex justify-content-start"
           style={{ marginRight: "30px", textAlign: "center" }}
         >
+          {!isShowLogin ? 
           <span
             style={{
-              fontSize: "1.5rem",
               textAlign: "center",
               wordWrap: "break-word",
             }}
             className="fw-bold fs-sm-6 fs-md-4 fs-lg-3 fs-xl-2 "
           >
             Library Management System
+          </span>:
+            <span
+            style={{
+              fontSize: "100%",
+              textAlign: "center",
+              wordWrap: "break-word",
+            }}
+            className="fw-bold fs-sm-1 fs-md-4 fs-lg-3 fs-xl-2 fs-lg-6 fs-xxl-6 "
+          >
+            Thăng Long Library
           </span>
+          }
         </Col>
           
-        <Col className="col-8 d-flex justify-content-end align-items-center">
+        <Col className="col-lg-7 col-md-7 col-xxl-8 col-xl-8  d-flex justify-content-end align-items-center ">
           {!isShowLogin ? (
             <div
               style={{
-                fontSize: "1.5rem",
                 cursor: "pointer",
                 fontWeight: "bold",
               }}
@@ -100,8 +117,9 @@ const HeaderComponent = (props) => {
               )}
             </div>
           ) : null}
-          {isShowLogin? <SearchComponent/> :null}
+          {isShowLogin? <SearchComponent value={searchValue} onChange={onChange} placeholder={placeHolderBookName}/> :null}
         </Col>
+        
       </Row>
     </Container>
   );

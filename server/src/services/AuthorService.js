@@ -4,7 +4,7 @@ const createAuthor = (newAuthor) => {
     const { authorName } = newAuthor;
     try {
       const checkAuthor = await Author.findOne(authorName);
-      if (checkAuthor !==undefined) {
+      if (checkAuthor !== undefined) {
         reject({
           status: "OK",
           message: "The AuthorName is already",
@@ -28,7 +28,7 @@ const getAllAuthor = (limit, page) => {
   return new Promise(async (resolve, reject) => {
     try {
       const totalAth = await Author.totalAuthor();
-      const allAuthor = await Author.getAllAuthor(limit,page)
+      const allAuthor = await Author.getAllAuthor(limit, page);
       resolve({
         status: "OK",
         message: "GET SUCCESS",
@@ -77,6 +77,23 @@ const getDetailsAuthor = (id) => {
     }
   });
 };
+const getFilterAuthor = (limit, page, key) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { data, total } = await Author.getFilterAuthor(limit, page, key);
+      resolve({
+        status: "OK",
+        message: "SUCCESS",
+        data: data,
+        total: total.length,
+        pageCurrent: Number(page + 1),
+        totalPage: Math.ceil(total.length / limit),
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 const deleteAuthor = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -103,4 +120,5 @@ module.exports = {
   updateAuthor,
   deleteAuthor,
   getDetailsAuthor,
+  getFilterAuthor,
 };

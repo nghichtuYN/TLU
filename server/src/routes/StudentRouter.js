@@ -7,4 +7,5 @@ router.put("/update-student/:id", StudentController.updateStudent);
 router.delete("/delete-student/:id",StudentController.deleteStudent);
 router.get("/getAllStudent", StudentController.getAllStudent);
 router.get("/get-Studentdetail/:id", StudentController.getDetailsStudent);
+router.get("/getFilterStudentByCode/:code", StudentController.getFilterStudentByCode);
 module.exports = router;

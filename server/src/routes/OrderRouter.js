@@ -6,4 +6,5 @@ router.get('/getAllOrder',OrderController.getAllOrder)
 router.put('/update-order/:id',OrderController.updateOrder)
 router.delete('/delete-order/:id',OrderController.deleteOrder)
 router.get('/getDetailOrder/:id',OrderController.getDetailsOrder)
+router.get('/getFilterOrder/:key',OrderController.getFilterOrder)
 module.exports=router

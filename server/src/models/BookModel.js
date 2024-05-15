@@ -23,10 +23,36 @@ const getAllBook = (limit, page) => {
     }
   });
 };
+const getBookByCategory = (limit, page, catId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const skip = page * limit;
+      const pool = await connect();
+      const sqlString = `SELECT b.id,bookName,b.quantity,b.isBorrowed ,c.categoryName,bookImage,ISBNNumber,bookPrice
+      FROM book b inner join category c on b.category_id=c.id 
+      WHERE c.id=@id
+      ORDER BY b.id OFFSET ${skip} ROWS FETCH NEXT ${limit} ROWS ONLY;`;
+      const sqlStringALL = `SELECT COUNT(*) AS TotalCount 
+      FROM book b inner join category c on b.category_id=c.id 
+      WHERE c.id=@id`;
+      const data = await pool
+        .request()
+        .input("id", sql.Int, catId)
+        .query(sqlString);
+      const total = await pool
+        .request()
+        .input("id", sql.Int, catId)
+        .query(sqlStringALL);
+      resolve({ data: data.recordset, total: total.recordset[0].TotalCount });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 const getBookFilter = (limit, page, searchValue) => {
   return new Promise(async (resolve, reject) => {
     try {
-      console.log(searchValue);
+      searchValue = searchValue.trim()
       const skip = page * limit;
       const pool = await connect();
       const sqlString = `SELECT b.id,bookName,b.quantity,b.isBorrowed ,c.id 'category_id',c.categoryName,a.id 'authorId',bookImage,a.authorName,ISBNNumber,bookPrice
@@ -37,10 +63,9 @@ const getBookFilter = (limit, page, searchValue) => {
       FROM book b inner join category c on b.category_id=c.id inner join author a on b.authorId=a.id
       WHERE bookName like N'%${searchValue}%' or c.categoryName like N'%${searchValue}%' or a.authorName like N'%${searchValue}%'
       ORDER BY b.id`;
-      console.log(sqlString);
       const data = await pool.request().query(sqlString);
       const total = await pool.request().query(sqlStringALL);
-      resolve({ data: data.recordset, total: total.recordset});
+      resolve({ data: data.recordset, total: total.recordset });
     } catch (error) {
       reject(error);
     }
@@ -258,4 +283,5 @@ module.exports = {
   totalBook,
   getBookFilter,
   updateBookInOrder,
+  getBookByCategory,
 };

@@ -20,9 +20,14 @@ import {
 import { Button } from "react-bootstrap";
 import TableComponent from "../../components/TableComponent/TableComponent";
 import PaginationComponent from "../../components/PaginationComponent/PaginationComponent";
-import { addStudent, getAllStudents } from "../../services/StudentService";
+import {
+  addStudent,
+  getAllStudents,
+  getFilterStudentByCode,
+} from "../../services/StudentService";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
 import { FaBookReader } from "react-icons/fa";
+import { SearchComponent } from "../../components/SearchComponent/SearchComponent";
 
 const ManageStudentPage = () => {
   const location = useLocation();
@@ -38,7 +43,12 @@ const ManageStudentPage = () => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(!basicModal);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [filterStudent, setFilterStudent] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+  const getStudentFilters = async (searchValue) => {
+    const res = await getFilterStudentByCode(5, page - 1, searchValue);
+    setFilterStudent(res.data);
+  };
   const getAllStudent = async () => {
     setIsLoading(true);
     return new Promise((resolve, reject) => {
@@ -53,6 +63,9 @@ const ManageStudentPage = () => {
       }, 500);
     });
   };
+  const onChange = (e) => {
+    setSearchValue(e.target.value);
+  };
   const { data: student, refetch } = useQueryHook(
     ["student", page],
     getAllStudent
@@ -62,10 +75,18 @@ const ManageStudentPage = () => {
       navigate(
         `/manage-student?pages=${Math.max(page - 1, 1)}&limits=${limit}`
       );
-      console.log("UseEffect");
+    }
+    if (searchValue !== "") {
+      getStudentFilters(searchValue);
+      if (filterStudent?.totalPage <= 1) {
+        navigate(`/manage-student?pages=${1}&limits=${limit}`);
+      }
+    }
+    if (searchValue === "") {
+      setFilterStudent([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [student, page]);
+  }, [student, page,searchValue,isLoading]);
   const onSuccessFn = (data, mes) => {
     refetch();
     success(mes);
@@ -75,8 +96,8 @@ const ManageStudentPage = () => {
   };
   const muationAdd = useMutationHook(
     (data) => addStudent(data),
-    (data) => onSuccessFn(data, "Tạo tác giả thành công"),
-    (data) => onErrorFn(data, "Tên tác giả đã tồn tại")
+    (data) => onSuccessFn(data, "Tạo độc giả thành công"),
+    (data) => onErrorFn(data, "Độc giả đã tồn tại")
   );
   const handleAdd = (event) => {
     event.preventDefault();
@@ -109,16 +130,33 @@ const ManageStudentPage = () => {
           <Button onClick={toggleOpen}>Thêm độc giả</Button>
         </div>
         <div className="d-flex flex-column">
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ flex: 1 }}>
+              <SearchComponent
+                value={searchValue}
+                onChange={onChange}
+                placeholder={"Tìm kiếm theo mã độc giả"}
+              />
+            </div>
+            {filterStudent && filterStudent.data?.length > 0 ? (
+              <p style={{ fontSize: "20px" }}>{filterStudent?.total} kết quả</p>
+            ) : null}
+          </div>
           {isLoading ? (
             <SpinnerComponent />
           ) : (
             <div>
-              <TableComponent student={student?.data} refetch={refetch} />
+              <TableComponent student={student?.data}
+              filterStudent={filterStudent?.data}
+              refetch={refetch} 
+              searchValue={searchValue}/>
               <div className="d-flex justify-content-end">
                 <PaginationComponent
                   isStudent={true}
-                  totalPage={student?.totalPage}
-                  pageCurrent={student?.pageCurrent}
+                  totalPage={
+                    filterStudent?.length===0 ?
+                    student?.totalPage: filterStudent?.totalPage}
+                  pageCurrent={filterStudent?.length===0 ? student?.pageCurrent:filterStudent?.pageCurrent}
                   limit={limit}
                 />
               </div>
@@ -183,7 +221,7 @@ const ManageStudentPage = () => {
                     id="mobileNumber"
                     type="phone"
                   />
-                  <label >
+                  <label>
                     <span>Trạng thái</span>
                     <span style={{ color: "red" }}>*</span>
                   </label>
@@ -209,7 +247,7 @@ const ManageStudentPage = () => {
                   <Button variant="outline-secondary" onClick={toggleOpen}>
                     Close
                   </Button>
-                  <Button onClick={handleAdd}>Save changes</Button>
+                  <Button onClick={handleAdd}>Thêm độc giả</Button>
                 </MDBModalFooter>
               </MDBModalContent>
             </MDBModalDialog>

@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React from "react";
 import { MDBTable, MDBTableHead } from "mdb-react-ui-kit";
 import "./style.css";
 import { ManageCategoryComponent } from "../MangageCategoryCompoent/ManageCategoryComponent";
@@ -18,37 +18,14 @@ const TableComponent = (props) => {
     categoryList,
     authorList,
     filterBook,
-    searchValue
+    searchValue,
+    filterAuthor,
+    filterStudent,
+    filterCategory,filterOrder
   } = props;
-  const [filterCat, setFilterCat] = useState([]);
- 
-  
-  
-  // useEffect(() => {
-  //   if (searchValue !== "") {
-  //     if (category) {
-  //       setFilterCat(
-  //         category?.filter((cat) =>
-  //           cat?.categoryName.toLowerCase().includes(searchValue.toLowerCase())
-  //         )
-  //       );
-  //     }
-  //     if (book) {
-  //       getBookFilters(searchValue);
-  //     }
-  //   } else if (searchValue === "") {
-  //     if (book) {
-  //       setFilterBook([]);
-  //     }
-  //     if (category) {
-  //       setFilterCat([]);
-  //     }
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [category,, book]);
+
   return (
     <div>
-      
       <div>
         <MDBTable
           align="middle"
@@ -108,12 +85,17 @@ const TableComponent = (props) => {
             <ManageCategoryComponent
               refetch={refetch}
               category={category}
-              filterCat={filterCat}
-              setFilterCat={setFilterCat}
+              filterCategory={filterCategory}
+              searchValue={searchValue}
             />
           ) : author ? (
             // Body tác giả
-            <ManageAuthorComponent refetch={refetch} author={author} />
+            <ManageAuthorComponent
+              refetch={refetch}
+              searchValue={searchValue}
+              filterAuthor={filterAuthor}
+              author={author}
+            />
           ) : book ? (
             // body sách
             <ManageBookComponent
@@ -127,12 +109,19 @@ const TableComponent = (props) => {
             />
           ) : // body học sinh
           student ? (
-            <ManageStudentComponent refetch={refetch} student={student} />
+            <ManageStudentComponent
+              refetch={refetch}
+              filterStudent={filterStudent}
+              searchValue={searchValue}
+              student={student}
+            />
           ) : // body đơn hàng
           order ? (
             <ManageOrderComponent
               refetchBook={refetchBook}
               refetch={refetch}
+              filterOrder={filterOrder}
+              searchValue={searchValue}
               order={order}
             />
           ) : null}

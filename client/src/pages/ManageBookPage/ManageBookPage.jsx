@@ -32,8 +32,8 @@ import { FaBookOpen } from "react-icons/fa";
 import { SearchComponent } from "../../components/SearchComponent/SearchComponent";
 
 const ManageBookPage = () => {
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = searchParams.get("pages");
   const limit = searchParams.get("limits");
@@ -51,13 +51,16 @@ const ManageBookPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [filterBook, setFilterBook] = useState([]);
   const [searchValue, setSearchValue] = useState("");
-  console.log(page);
   const onChange = (e) => {
     setSearchValue(e.target.value);
   };
-  const getBookFilters = async (searchValue) => {
-    const res = await getBookFilter(5, page - 1, { searchValue });
-    setFilterBook(res.data);
+  const getBookFilters = (searchValue) => {
+    setIsLoading(true)
+    setTimeout(async () => {
+      const res = await getBookFilter(5, page - 1, searchValue);
+      setFilterBook(res.data);
+      setIsLoading(false)
+    }, 500);
   };
   const getAllBook = async () => {
     setIsLoading(true);
@@ -73,8 +76,6 @@ const ManageBookPage = () => {
       }, 500);
     });
   };
-  if (searchValue !== "") {
-  }
   const { data: book, refetch } = useQueryHook(["book", page], getAllBook);
   useEffect(() => {
     if (book?.data?.length === 0) {
@@ -84,14 +85,14 @@ const ManageBookPage = () => {
     if (searchValue !== "") {
       getBookFilters(searchValue);
       if (filterBook?.totalPage <= 1) {
-        navigate(`/manage-book?pages=${1}&limits=${limit}`);
+      navigate(`/manage-book?pages=${1}&limits=${limit}`);
       }
     }
     if (searchValue === "") {
       setFilterBook([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [book, page, searchValue, isLoading]);
+  }, [book, page, searchValue]);
   const getAllAuthors = async () => {
     const res = await getAllAuthor();
     return res.data;
@@ -192,7 +193,11 @@ const ManageBookPage = () => {
         <div className="d-flex flex-column">
           <div style={{ display: "flex", alignItems: "center" }}>
             <div style={{ flex: 1 }}>
-              <SearchComponent value={searchValue} onChange={onChange} />
+              <SearchComponent
+                value={searchValue}
+                onChange={onChange}
+                placeholder={"Tìm kiếm sách, tác giả, danh mục"}
+              />
             </div>
             {filterBook && filterBook.data?.length > 0 ? (
               <p style={{ fontSize: "20px" }}>{filterBook?.total} kết quả</p>
@@ -215,17 +220,16 @@ const ManageBookPage = () => {
                 <PaginationComponent
                   isBook={true}
                   totalPage={
-                    filterBook.length === 0
+                    filterBook?.length === 0
                       ? book?.totalPage
                       : filterBook?.totalPage
                   }
                   pageCurrent={
-                    filterBook.length === 0
+                    filterBook?.length === 0
                       ? book?.pageCurrent
                       : filterBook?.pageCurrent
                   }
                   limit={limit}
-                  searchValue={searchValue}
                 />
               </div>
             </div>
@@ -374,6 +378,7 @@ const ManageBookPage = () => {
                       onChange={(e) => setBookPrice(e.target.value)}
                       id="bookPrice"
                       type="number"
+                      min={0}
                     />
                   </div>
                 </div>
@@ -388,6 +393,7 @@ const ManageBookPage = () => {
                       onChange={(e) => setQuantity(e.target.value)}
                       id="bookQuantity"
                       type="number"
+                      min={0}
                     />
                   </div>
                 </div>

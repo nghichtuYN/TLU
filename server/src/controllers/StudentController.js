@@ -91,10 +91,34 @@ const getDetailsStudent = async (req, res) => {
     });
   }
 };
+const getFilterStudentByCode = async (req, res) => {
+  try {
+    const stuCode = req.params.code;
+    const { limit, page } = req.query;
+
+    if (!stuCode) {
+      return res.status(200).json({
+        status: "ERR",
+        message: "the stuId is required",
+      });
+    }
+    const response = await StudentService.getFilterStudentByCode(
+      Number(limit),
+      Number(page),
+      stuCode
+    );
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
 module.exports = {
   createStudent,
   updateStudent,
   deleteStudent,
   getAllStudent,
   getDetailsStudent,
+  getFilterStudentByCode,
 };

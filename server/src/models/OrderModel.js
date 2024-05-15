@@ -79,6 +79,93 @@ const totalOrder = () => {
     }
   });
 };
+const getFilterOrder = (limit, page, searchValue) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      searchValue = searchValue.trim();
+      const skip = page * limit;
+      const pool = await connect();
+      const sqlString = `SELECT o.id,
+      u.studentCode,
+      u.id AS UserId,
+      u.fullName,STUFF(
+               (SELECT ', ' + b.bookName
+                FROM book b
+                INNER JOIN orderItems oi ON b.id = oi.bookId
+                WHERE oi.orderId = o.id
+                  FOR XML PATH('')), 1, 2, '') AS BookNames,
+                  STUFF(
+               (SELECT ', ' + b.ISBNNumber
+                FROM book b
+                INNER JOIN orderItems oi ON b.id = oi.bookId
+                WHERE oi.orderId = o.id
+                  FOR XML PATH('')), 1, 2, '') AS ISBNNumbers,
+                  STUFF(
+                    (
+                        SELECT ', ' + CONVERT(VARCHAR(10), b.id) 
+                        FROM book b
+                        INNER JOIN orderItems oi ON b.id = oi.bookId
+                        WHERE oi.orderId = o.id
+                        FOR XML PATH('')), 1, 2, '') AS BookIDs,
+       o.borrowDate,
+       o.returnDate,
+       o.returnStatus
+FROM [user] u
+INNER JOIN [order] o ON u.id = o.userId
+WHERE u.studentCode IS NOT NULL AND u.studentCode like N'%${searchValue}%'
+GROUP BY o.id,
+u.studentCode,
+u.id,
+         u.fullName,
+         o.borrowDate,
+         o.returnDate,
+         o.returnStatus
+ORDER BY o.id
+OFFSET ${skip} ROWS FETCH NEXT ${limit} ROWS ONLY`;
+      const sqlStringALL = `SELECT o.id,
+      u.studentCode,
+      u.id AS UserId,
+      u.fullName,STUFF(
+               (SELECT ', ' + b.bookName
+                FROM book b
+                INNER JOIN orderItems oi ON b.id = oi.bookId
+                WHERE oi.orderId = o.id
+                  FOR XML PATH('')), 1, 2, '') AS BookNames,
+                  STUFF(
+               (SELECT ', ' + b.ISBNNumber
+                FROM book b
+                INNER JOIN orderItems oi ON b.id = oi.bookId
+                WHERE oi.orderId = o.id
+                  FOR XML PATH('')), 1, 2, '') AS ISBNNumbers,
+                  STUFF(
+                    (
+                        SELECT ', ' + CONVERT(VARCHAR(10), b.id) 
+                        FROM book b
+                        INNER JOIN orderItems oi ON b.id = oi.bookId
+                        WHERE oi.orderId = o.id
+                        FOR XML PATH('')), 1, 2, '') AS BookIDs,
+       o.borrowDate,
+       o.returnDate,
+       o.returnStatus
+FROM [user] u
+INNER JOIN [order] o ON u.id = o.userId
+WHERE u.studentCode IS NOT NULL AND u.studentCode like N'%${searchValue}%'
+GROUP BY o.id,
+u.studentCode,
+u.id,
+         u.fullName,
+         o.borrowDate,
+         o.returnDate,
+         o.returnStatus
+ORDER BY o.id `;
+      const data = await pool.request().query(sqlString);
+      const total = await pool.request().query(sqlStringALL);
+      resolve({ data: data.recordset, total: total.recordset });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 const updateOrder = (id, updatedata) => {
   return new Promise(async (resolve, reject) => {
     const { returnStatus, orderItems } = updatedata;
@@ -152,5 +239,6 @@ module.exports = {
   totalOrder,
   updateOrder,
   getOrderByID,
-  deleteOrderByOrderItems
+  deleteOrderByOrderItems,
+  getFilterOrder,
 };

@@ -1,7 +1,7 @@
 const CategoryServices = require("../services/CategoryService");
 const createCategory = async (req, res) => {
   try {
-    const { categoryName ,status} = req.body;
+    const { categoryName, status } = req.body;
     if (!categoryName || !status) {
       return res.status(200).json({
         status: "ERR",
@@ -18,8 +18,33 @@ const createCategory = async (req, res) => {
 };
 const getAllCategory = async (req, res) => {
   try {
-    const {limit,page}=req.query
-    const response = await CategoryServices.getAllCategory(Number(limit),Number(page));
+    const { limit, page } = req.query;
+    const response = await CategoryServices.getAllCategory(
+      Number(limit),
+      Number(page)
+    );
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
+const getFilterCategory = async (req, res) => {
+  try {
+    const { limit, page } = req.query;
+    const  key  = req.params.key;
+    if (!key) {
+      return res.status(200).json({
+        status: "ERR",
+        message: "the CategoryName is required",
+      });
+    }
+    const response = await CategoryServices.getFilterCategory(
+      Number(limit),
+      Number(page),
+      key
+    );
     return res.status(200).json(response);
   } catch (error) {
     return res.status(404).json({
@@ -46,22 +71,22 @@ const updateCategory = async (req, res) => {
 };
 
 const getDetailsCategory = async (req, res) => {
-    try {
-      const catId = req.params.id;
-      if (!catId) {
-        return res.status(200).json({
-          status: "ERR",
-          message: "the catId is required",
-        });
-      }
-      const response = await CategoryServices.getDetailsCategory(catId);
-      return res.status(200).json(response);
-    } catch (error) {
-      return res.status(404).json({
-        message: error,
+  try {
+    const catId = req.params.id;
+    if (!catId) {
+      return res.status(200).json({
+        status: "ERR",
+        message: "the catId is required",
       });
     }
-  };
+    const response = await CategoryServices.getDetailsCategory(catId);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
 const deleteCategory = async (req, res) => {
   try {
     const catId = req.params.id;
@@ -79,4 +104,11 @@ const deleteCategory = async (req, res) => {
     });
   }
 };
-module.exports = { createCategory, getAllCategory, updateCategory, deleteCategory,getDetailsCategory };
+module.exports = {
+  createCategory,
+  getAllCategory,
+  updateCategory,
+  deleteCategory,
+  getDetailsCategory,
+  getFilterCategory,
+};

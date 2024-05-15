@@ -87,6 +87,7 @@ const ModalComponent = (props) => {
   const updateRow = (data) => {
     const { id, ...rest } = data;
     if (category) {
+      console.log({rest})
       return updateCategory(id, rest);
     } else if (author) {
       return updateAuthor(id, rest);
@@ -106,7 +107,7 @@ const ModalComponent = (props) => {
   );
   const handleUpdate = () => {
     if (category) {
-      mutationUpdate.mutate({ id: category_id, categoryName, status });
+      mutationUpdate.mutate({ id: category_id, categoryName, status:status });
     } else if (author) {
       mutationUpdate.mutate({ id: authorId, authorName });
     } else if (book) {
@@ -332,6 +333,7 @@ const ModalComponent = (props) => {
                     value={bookPrice}
                     id="bookPrice"
                     type="number"
+                    min={0}
                   />
                   <label>
                     <span> Số lượng </span>
@@ -343,6 +345,7 @@ const ModalComponent = (props) => {
                     id="bookQuantity"
                     wrapperClass="mb-4"
                     type="number"
+                    min={0}
                   />
                 </>
               ) : student ? (
@@ -554,7 +557,7 @@ const ModalComponent = (props) => {
                     : true
                 }
               >
-                Save changes
+                Lưu thay đổi
               </Button>
             </MDBModalFooter>
           </MDBModalContent>

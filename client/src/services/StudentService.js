@@ -31,3 +31,9 @@ export const deleteStudent= async (id) => {
   );
   return res.data;
 };
+export const getFilterStudentByCode = async (limit = 0, page = 0,searchValue) => {
+  const res = await axios.get(
+    `http://localhost:3001/api/student/getFilterStudentByCode/${searchValue}?page=${page}&limit=${limit}`
+  );
+  return res;
+};

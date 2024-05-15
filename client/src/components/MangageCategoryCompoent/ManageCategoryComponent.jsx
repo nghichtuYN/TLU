@@ -8,23 +8,27 @@ import { deleteCategory } from "../../services/CategoryService";
 import { error, success } from "../MessageComponent/MessageComponent";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import NotFoundMessageComponent from "../NotFoundMessageComponent/NotFoundMessageComponent";
 export const ManageCategoryComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
-  const { category, filterCat, refetch } = props;
+  const { category, filterCategory, refetch, searchValue } = props;
   const [categoryName, setCategoryName] = useState("");
   // eslint-disable-next-line no-unused-vars
   const [status, setStatus] = useState("");
   const [category_id, setCatID] = useState(0);
   const handleOpen = (id) => {
     setBasicModal(true);
-    const selectedCategory = category?.find((cat) => cat?.id === id);
+    const selectedCategory = filterCategory
+      ? filterCategory?.find((cat) => cat?.id === id)
+      : category?.find((cat) => cat?.id === id);
     if (selectedCategory) {
       setCatID(selectedCategory?.id);
       setStatus(selectedCategory?.status);
       setCategoryName(selectedCategory?.categoryName);
     }
   };
+  console.log("status", status);
   const onSuccessFn = (data, mes) => {
     refetch();
     success(mes);
@@ -50,8 +54,9 @@ export const ManageCategoryComponent = (props) => {
   return (
     <>
       <MDBTableBody>
-        {filterCat && filterCat.length > 0
-          ? filterCat.map((cat) => {
+        {searchValue !== "" ? (
+          filterCategory && filterCategory.length > 0 ? (
+            filterCategory.map((cat) => {
               const formattedDateCreated = format(
                 new Date(cat?.created_at),
                 "dd/MM/yyyy"
@@ -103,58 +108,70 @@ export const ManageCategoryComponent = (props) => {
                 </tr>
               );
             })
-          : category && category.map((cat) => {
-              const formattedDateCreated = format(
-                new Date(cat?.created_at),
-                "dd/MM/yyyy"
-              );
-              const formattedDateUpdated = cat?.updated_at
-                ? format(new Date(cat?.updated_at), "dd/MM/yyyy")
-                : formattedDateCreated;
-              return (
-                <tr key={cat?.id}>
-                  <td>
-                    <div className="d-flex align-items-center">
-                      <div className="ms-3">
-                        <p className="fw-bold mb-1">{cat?.categoryName}</p>
-                      </div>
+          ) : (
+            <tr>
+              <td colSpan={4}>
+                <div className="d-flex justify-content-center align-items-center">
+                  <NotFoundMessageComponent />
+                </div>
+              </td>
+            </tr>
+          )
+        ) : (
+          category &&
+          category.map((cat) => {
+            const formattedDateCreated = format(
+              new Date(cat?.created_at),
+              "dd/MM/yyyy"
+            );
+            const formattedDateUpdated = cat?.updated_at
+              ? format(new Date(cat?.updated_at), "dd/MM/yyyy")
+              : formattedDateCreated;
+            return (
+              <tr key={cat?.id}>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1">{cat?.categoryName}</p>
                     </div>
-                  </td>
-                  <td>
-                    <div className="d-flex align-items-center ">
-                      {cat?.status ? (
-                        <MDBBadge color="success" pill>
-                          Active
-                        </MDBBadge>
-                      ) : (
-                        <MDBBadge color="danger" pill>
-                          Inactive
-                        </MDBBadge>
-                      )}
-                    </div>
-                  </td>
-                  <td>{formattedDateCreated}</td>
-                  <td>{formattedDateUpdated}</td>
-                  <td>
-                    <Button
-                      onClick={() => handleOpen(cat?.id)}
-                      variant="primary"
-                      rounded="true"
-                    >
-                      <FaRegEdit style={{ fontSize: "20px" }} />
-                    </Button>
-                    <Button
-                      style={{ marginLeft: "5px" }}
-                      variant="danger"
-                      rounded="true"
-                      onClick={() => handleDelete(cat?.id)}
-                    >
-                      <MdDeleteForever style={{ fontSize: "20px" }} />
-                    </Button>
-                  </td>
-                </tr>
-              );
-            })}
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center ">
+                    {cat?.status ? (
+                      <MDBBadge color="success" pill>
+                        Active
+                      </MDBBadge>
+                    ) : (
+                      <MDBBadge color="danger" pill>
+                        Inactive
+                      </MDBBadge>
+                    )}
+                  </div>
+                </td>
+                <td>{formattedDateCreated}</td>
+                <td>{formattedDateUpdated}</td>
+                <td>
+                  <Button
+                    onClick={() => handleOpen(cat?.id)}
+                    variant="primary"
+                    rounded="true"
+                  >
+                    <FaRegEdit style={{ fontSize: "20px" }} />
+                  </Button>
+                  <Button
+                    style={{ marginLeft: "5px" }}
+                    variant="danger"
+                    rounded="true"
+                    onClick={() => handleDelete(cat?.id)}
+                  >
+                    <MdDeleteForever style={{ fontSize: "20px" }} />
+                  </Button>
+                </td>
+              </tr>
+            );
+          })
+        )}
       </MDBTableBody>
       {/* Modal */}
       <ModalComponent
@@ -162,7 +179,7 @@ export const ManageCategoryComponent = (props) => {
         category_id={category_id}
         setCatID={setCatID}
         categoryName={categoryName}
-        status={setStatus}
+        status={status}
         setCategoryName={setCategoryName}
         setStatus={setStatus}
         basicModal={basicModal}

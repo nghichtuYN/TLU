@@ -8,10 +8,11 @@ import { error, success } from "../MessageComponent/MessageComponent";
 import { deleteStudent } from "../../services/StudentService";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import NotFoundMessageComponent from "../NotFoundMessageComponent/NotFoundMessageComponent";
 const ManageStudentComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
-  const { student, refetch } = props;
+  const { student, refetch, filterStudent, searchValue } = props;
   const [studentId, setStudentId] = useState(0);
   const [studentCode, setStudentCode] = useState("");
   const [fullName, setFullName] = useState("");
@@ -22,8 +23,9 @@ const ManageStudentComponent = (props) => {
   const handleOpen = (id) => {
     setBasicModal(true);
     if (student) {
-      const selectedStudent = student?.find((student) => student?.id === id);
-      console.log(selectedStudent);
+      const selectedStudent = filterStudent
+        ? filterStudent.find((student) => student?.id === id)
+        : student?.find((student) => student?.id === id);
       if (selectedStudent) {
         setStudentId(selectedStudent?.id);
         setFullName(selectedStudent?.fullName);
@@ -56,11 +58,13 @@ const ManageStudentComponent = (props) => {
       mutationDelete.mutate(id);
     }
   };
+  console.log(searchValue)
   return (
     <>
       <MDBTableBody>
-        {student
-          ? student?.map((student) => {
+        {searchValue !== "" ? (
+          filterStudent && filterStudent?.length > 0 ? (
+            filterStudent?.map((student) => {
               const formattedDateCreated = student?.created_at
                 ? format(new Date(student?.created_at), "dd/MM/yyyy")
                 : "";
@@ -148,7 +152,100 @@ const ManageStudentComponent = (props) => {
                 </tr>
               );
             })
-          : null}
+          ) : (
+            <tr>
+              <td colSpan={7}>
+                <div className="d-flex justify-content-center align-items-center">
+                  <NotFoundMessageComponent />
+                </div>
+              </td>
+            </tr>
+          )
+        ) : (
+          student &&
+          student?.map((student) => {
+            const formattedDateCreated = student?.created_at
+              ? format(new Date(student?.created_at), "dd/MM/yyyy")
+              : "";
+            return (
+              <tr key={student?.id}>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1" title={student?.studentCode}>
+                        {student?.studentCode}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1" title={student?.fullName}>
+                        {student?.fullName}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1" title={student?.email}>
+                        {student?.email}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1" title={student?.mobileNumber}>
+                        {student?.mobileNumber}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1">{formattedDateCreated}</p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center ">
+                    {student?.status ? (
+                      <MDBBadge color="success" pill>
+                        Active
+                      </MDBBadge>
+                    ) : (
+                      <MDBBadge color="danger" pill>
+                        Inactive
+                      </MDBBadge>
+                    )}
+                  </div>
+                </td>
+                <td>
+                  <Button
+                    variant="primary"
+                    rounded="true"
+                    onClick={() => handleOpen(student?.id)}
+                  >
+                    <FaRegEdit style={{ fontSize: "20px" }} />
+                  </Button>
+                  <Button
+                    style={{ marginLeft: "5px" }}
+                    variant="danger"
+                    rounded="true"
+                    onClick={() => handleDelete(student?.id)}
+                  >
+                    <MdDeleteForever style={{ fontSize: "20px" }} />
+                  </Button>
+                </td>
+              </tr>
+            );
+          })
+        )}
       </MDBTableBody>
       {/* Modal */}
       <ModalComponent
