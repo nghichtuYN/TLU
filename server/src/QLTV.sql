@@ -10,6 +10,7 @@ CREATE TABLE [user] (
   [email] nvarchar(255),
   [mobileNumber] nvarchar(255),
   [isAdmin] bit,
+  [studentCode] nvarchar(7) NULL
   [created_at] DATETIME DEFAULT GETDATE(),
   [updated_at] DATETIME DEFAULT NULL,
 )
