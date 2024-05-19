@@ -61,11 +61,14 @@ const ManageCategory = () => {
     getAllCategory
   );
   const getCategoriesFilter = (searchValue) => {
-    setIsLoading(true)
+    setIsLoading(true);
     setTimeout(async () => {
       const res = await getFilterCategory(5, page - 1, searchValue);
       setFilterCategory(res.data);
-      setIsLoading(false)
+      if (filterCategory?.length === 0 || filterCategory?.totalPage <= 1) {
+        navigate(`/manage-category?pages=${1}&limits=${limit}`);
+      }
+      setIsLoading(false);
     }, 500);
   };
   useEffect(() => {
@@ -74,17 +77,19 @@ const ManageCategory = () => {
         `/manage-category?pages=${Math.max(page - 1, 1)}&limits=${limit}`
       );
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, page]);
+  useEffect(() => {
     if (searchValue !== "") {
       getCategoriesFilter(searchValue);
-      if (filterCategory?.totalPage <= 1) {
-      navigate(`/manage-category?pages=${1}&limits=${limit}`);
-      }
     }
     if (searchValue === "") {
       setFilterCategory([]);
+      refetch();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, page, searchValue]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue]);
   const onChange = (e) => {
     setSearchValue(e.target.value);
   };
@@ -154,6 +159,7 @@ const ManageCategory = () => {
                 filterCategory={filterCategory?.data}
                 searchValue={searchValue}
                 refetch={refetch}
+                getCategoriesFilter={getCategoriesFilter}
               />
               <div className="d-flex justify-content-end">
                 <PaginationComponent

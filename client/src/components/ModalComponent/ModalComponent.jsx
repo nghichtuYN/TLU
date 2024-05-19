@@ -25,6 +25,11 @@ import { updateOrder } from "../../services/OrderService";
 
 const ModalComponent = (props) => {
   const {
+    getStudentFilters,
+    getCategoriesFilter,
+    getAuthorFilters,
+    getBookFilters,
+    searchValue,
     book,
     category,
     author,
@@ -76,6 +81,28 @@ const ModalComponent = (props) => {
   } = props;
   const onSuccessFn = (data, mes) => {
     refetch();
+    if (book) {
+      // setIsUpdate(!isUpdate)
+      if (searchValue) {
+        getBookFilters(searchValue);
+      }
+    }
+
+    if (author) {
+      if (searchValue) {
+        getAuthorFilters(searchValue);
+      }
+    }
+    if (category) {
+      if (searchValue) {
+        getCategoriesFilter(searchValue);
+      }
+    }
+    if (student) {
+      if (searchValue) {
+        getStudentFilters(searchValue);
+      }
+    }
     if (order) {
       refetchBook();
     }
@@ -87,7 +114,6 @@ const ModalComponent = (props) => {
   const updateRow = (data) => {
     const { id, ...rest } = data;
     if (category) {
-      console.log({rest})
       return updateCategory(id, rest);
     } else if (author) {
       return updateAuthor(id, rest);
@@ -107,7 +133,7 @@ const ModalComponent = (props) => {
   );
   const handleUpdate = () => {
     if (category) {
-      mutationUpdate.mutate({ id: category_id, categoryName, status:status });
+      mutationUpdate.mutate({ id: category_id, categoryName, status: status });
     } else if (author) {
       mutationUpdate.mutate({ id: authorId, authorName });
     } else if (book) {
@@ -514,7 +540,6 @@ const ModalComponent = (props) => {
                                   value="true"
                                   onChange={(e) => setStatus(e.target.value)}
                                   label="Đã trả"
-                                  // checked={status}
                                   inline
                                 />
                               </td>

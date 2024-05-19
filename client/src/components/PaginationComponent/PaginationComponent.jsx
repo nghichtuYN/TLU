@@ -47,7 +47,7 @@ const PaginationComponent = (props) => {
                 navigate(`/manage-order?pages=${index + 1}&limits=${limit}`);
               }
               else if (isBookByCategory) {
-                navigate(`/category/?pages=${index + 1}&limits=${limit}&cat=${catId}`,{state:categoryName});
+                navigate(`/category/?pages=${index + 1}&limits=${limit}&cat=${catId}`,{state:{categoryName:categoryName}});
               }else if (isFilterBookBySearch) {
                 navigate(`/home-page?pages=${index + 1}&limits=${limit}`);
               }
@@ -91,7 +91,7 @@ const PaginationComponent = (props) => {
               }else if (isOrder) {
                 navigate(`/manage-order?pages=${i}&limits=${limit}`);
               }else if (isBookByCategory) {
-                navigate(`/category/?pages=${i}&limits=${limit}&cat=${catId}`,{state:categoryName});
+                navigate(`/category/?pages=${i}&limits=${limit}&cat=${catId}`,{state:{categoryName:categoryName}});
               }else if (isFilterBookBySearch) {
                 navigate(`/home-page?pages=${i}&limits=${limit}`);
               }
@@ -153,7 +153,7 @@ const PaginationComponent = (props) => {
                   `/manage-order?pages=${pageCurrent - 1}&limits=${limit}`
                 );
               }else if (isBookByCategory) {
-                navigate(`/category/?pages=${pageCurrent - 1}&limits=${limit}&cat=${catId}`,{state:categoryName});
+                navigate(`/category/?pages=${pageCurrent - 1}&limits=${limit}&cat=${catId}`,{state:{categoryName:categoryName}});
               }else if (isFilterBookBySearch) {
                 navigate(`/home-page?pages=${pageCurrent - 1}&limits=${limit}`);
               }
@@ -188,7 +188,7 @@ const PaginationComponent = (props) => {
                   `/manage-order?pages=${pageCurrent + 1}&limits=${limit}`
                 );
               }else if (isBookByCategory) {
-                navigate(`/category/?pages=${pageCurrent + 1}&limits=${limit}&cat=${catId}`,{state:categoryName});
+                navigate(`/category/?pages=${pageCurrent + 1}&limits=${limit}&cat=${catId}`,{state:{categoryName:categoryName}});
               }else if (isFilterBookBySearch) {
                 navigate(`/home-page?pages=${pageCurrent + 1}&limits=${limit}`);
               }

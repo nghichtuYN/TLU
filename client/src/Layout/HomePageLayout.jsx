@@ -94,7 +94,7 @@ const HomePageLayout = ({ children }) => {
                               setSearchValue("");
                               navigate(
                                 `/category/?pages=${bookPage}&limits=${bookLimit}&cat=${cat?.id}`,
-                                { state: cat?.categoryName }
+                                { state: { categoryName: cat?.categoryName } }
                               );
                             }}
                             style={{

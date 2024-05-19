@@ -42,10 +42,11 @@ const getAllOrder = (limit, page) => {
     }
   });
 };
-const getFilterOrder = (limit, page, key) => {
+const getFilterOrder = (limit, page, key,status) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { data, total } = await Order.getFilterOrder(limit, page, key);
+      const { data, total } = await Order.getFilterOrder(limit, page, key,status);
+      console.log(total.length)
       resolve({
         status: "OK",
         message: "SUCCESS",

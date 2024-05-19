@@ -94,7 +94,7 @@ const TypeCategoryPage = () => {
                     className="mt-1"
                     variant="top"
                     src={`http://localhost:3001/uploads/${book.bookImage}`}
-                    style={{ width: "100%", height: "150px" }}
+                    style={{ width: "100%", height: "200px" }}
                     alt=""
                   />
                   <Card.Body className="text-center">

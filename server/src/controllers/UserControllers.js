@@ -47,6 +47,35 @@ const loginUser = async (req, res) => {
     });
   }
 };
+const getMemberFilter = async (req, res) => {
+  try {
+    const { limit, page } = req.query;
+    const key =req.params?.key
+    const response = await UserService.getMemberFilter(Number(limit), Number(page),key);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
+const checkPassword = async (req, res) => {
+  try {
+    const { password ,id} = req.body;
+    if (!password ||!id) {
+      return res.status(200).json({
+        status: "ERR",
+        message: "Vui lòng nhập đầy đủ thông tin !!!",
+      });
+    }
+    const response = await UserService.checkPassword(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
 const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -83,7 +112,8 @@ const deleteUser = async (req, res) => {
 };
 const getAllUser = async (req, res) => {
   try {
-    const response = await UserService.getAllUser();
+    const { limit, page } = req.query;
+    const response = await UserService.getAllUser(Number(limit), Number(page));
     return res.status(200).json(response);
   } catch (error) {
     return res.status(404).json({
@@ -116,4 +146,6 @@ module.exports = {
   deleteUser,
   getAllUser,
   getDetailsUser,
+  checkPassword,
+  getMemberFilter
 };

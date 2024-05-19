@@ -6,12 +6,11 @@ import { Button, Card } from "react-bootstrap";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
 import { getAllCategories } from "../../services/CategoryService";
 import { useSelector } from "react-redux";
-import plus from "../../asset/images/plus.png";
 import NotFoundMessageComponent from "../../components/NotFoundMessageComponent/NotFoundMessageComponent";
 import PaginationComponent from "../../components/PaginationComponent/PaginationComponent";
 import "./style.css";
 const HomePageStudent = (props) => {
-  const {setSearchValue}=props
+  const { setSearchValue } = props;
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
@@ -46,7 +45,7 @@ const HomePageStudent = (props) => {
   const getBookFilters = (searchValue) => {
     setIsLoading(true);
     setTimeout(async () => {
-      const res = await getBookFilter(8, page ? page - 1 : 0, { searchValue });
+      const res = await getBookFilter(8, page ? page - 1 : 0, searchValue);
       setFilterBookBySearch(res.data);
       setIsLoading(false);
     }, 500);
@@ -109,7 +108,7 @@ const HomePageStudent = (props) => {
                           position: "relative",
                         }}
                         onClick={() => {
-                          setSearchValue('')
+                          setSearchValue("");
                           const selectCat = categoryList?.data.find(
                             (cat) => cat?.id === book?.category_id
                           );
@@ -233,7 +232,7 @@ const HomePageStudent = (props) => {
                               className="mt-1"
                               variant="top"
                               src={`http://localhost:3001/uploads/${book.bookImage}`}
-                              style={{ width: "100%", height: "150px" }}
+                              style={{ width: "100%", height: "200px" }}
                               alt=""
                             />
                             <Card.Body className="text-center">
@@ -310,7 +309,7 @@ const HomePageStudent = (props) => {
                                     className="mt-1"
                                     variant="top"
                                     src={`http://localhost:3001/uploads/${book.bookImage}`}
-                                    style={{ width: "100%", height: "150px" }}
+                                    style={{ width: "100%", height: "200px" }}
                                     alt=""
                                   />
                                   <Card.Body className="text-center">
@@ -330,46 +329,19 @@ const HomePageStudent = (props) => {
                               );
                             })}
                           {filterBook?.length > 6 ? (
-                            <Card
-                              className="col-3"
-                              style={{
-                                width: "16rem",
-                                cursor: "pointer",
-                                marginLeft: "50px",
-                                backgroundColor: "#A0A0A0",
-                              }}
-                              onClick={() =>
-                                navigate(
-                                  `/category/?pages=${bookPage}&limits=${bookLimit}&cat=${cat?.id}`,
-                                  { state: cat?.categoryName }
-                                )
-                              }
-                            >
-                              <Card.Img
-                                className="mt-1"
-                                variant="top"
-                                src={plus}
-                                style={{
-                                  width: "100%",
-                                  height: "150px",
-                                  backgroundColor: "white",
-                                }}
-                                alt=""
-                              />
-                              <Card.Body className="text-center">
-                                <Card.Title
-                                  style={{
-                                    maxWidth: "150px",
-                                    whiteSpace: "nowrap",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                  }}
-                                  title={"Xem thêm"}
-                                >
-                                  Xem tất cả
-                                </Card.Title>
-                              </Card.Body>
-                            </Card>
+                            <Button
+                            style={{ fontSize: "15px",width: "16rem",marginLeft: "50px", }}
+                            onClick={() =>
+                              navigate(
+                                `/category/?pages=${bookPage}&limits=${bookLimit}&cat=${cat?.id}`,
+                                { state: { categoryName: cat?.categoryName } }
+                              )
+                            }
+                            className="col-3"
+                            variant="info"
+                          >
+                            ...Xem tất cả {">>"}
+                          </Button>
                           ) : null}
                         </div>
                       </section>

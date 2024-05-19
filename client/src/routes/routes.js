@@ -1,4 +1,5 @@
 import BookDetailPage from "../pages/BookDetailPage/BookDetailPage";
+import DetailUserPage from "../pages/DetailUserPage/DetailUserPage";
 import HomePage from "../pages/HomePage/HomePage";
 import HomePageStudent from "../pages/HomePageStudent/HomePageStudent";
 import ManageAuthorPage from "../pages/ManageAuthorPage/ManageAuthorPage";
@@ -25,5 +26,7 @@ export const publicRoute=[
     {path:'/home-page',component:HomePageStudent,isShowHeader:false},
     {path:'/book-detail/:id',component:BookDetailPage,isShowHeader:false},
     {path:'/category',component:TypeCategoryPage,isShowHeader:false},
+    {path:'/detail-user',component:DetailUserPage,isShowHeader:true},
+
     
 ]

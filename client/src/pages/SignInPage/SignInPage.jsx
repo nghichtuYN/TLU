@@ -10,19 +10,24 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
 
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./style.css";
 import logo from "../../asset/logo/Logo.png";
 import banner from "../../asset/images/banner.jpg";
-import {  getDetailsUser, signInMember } from "../../services/AdminService";
+import { getDetailsUser, signInMember } from "../../services/AdminService";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { updateMember } from "../../redux/Slice/MemberSlice";
 import { Button } from "react-bootstrap";
-const SignInPage=()=> {
+const SignInPage = () => {
   const [userName, setUserName] = useState("");
   const [password, setpassword] = useState("");
+  const [showPassword, setShowPassWord] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const handleShowPasswrond = () => {
+    setShowPassWord(!showPassword);
+  };
   const mutation = useMutation({
     mutationFn: (data) => {
       return signInMember(data);
@@ -76,15 +81,25 @@ const SignInPage=()=> {
                 setUserName(e.target.value);
               }}
             />
-            <MDBInput
-              wrapperClass="mb-4"
-              label="Mật khẩu"
-              id="form2"
-              type="password"
-              onChange={(e) => {
-                setpassword(e.target.value);
-              }}
-            />
+            <div className="position-relative">
+              <MDBInput
+                wrapperClass="mb-4"
+                label="Mật khẩu"
+                id="form2"
+                type={showPassword ? "text" : "password"}
+                onChange={(e) => {
+                  setpassword(e.target.value);
+                }}
+              />
+              {password ? (
+                <span
+                  onClick={handleShowPasswrond}
+                  className="password-toggle-icon"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
+              ) : null}
+            </div>
             <div className="text-center pt-1 mb-5 pb-1">
               <Button
                 className="mb-4 w-100 gradient-custom-2"
@@ -116,6 +131,6 @@ const SignInPage=()=> {
       </MDBRow>
     </MDBContainer>
   );
-}
+};
 
 export default SignInPage;

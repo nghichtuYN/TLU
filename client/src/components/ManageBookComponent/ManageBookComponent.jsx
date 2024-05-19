@@ -11,7 +11,7 @@ import NotFoundMessageComponent from "../NotFoundMessageComponent/NotFoundMessag
 export const ManageBookComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
-  const { book, refetch, categoryList, authorList, filterBook, searchValue } =
+  const { book, refetch, categoryList, authorList, filterBook, searchValue,getBookFilters } =
     props;
   const [authorId, setAuthID] = useState(0);
   const [authorName, setAuthorName] = useState("");
@@ -31,6 +31,7 @@ export const ManageBookComponent = (props) => {
         ? filterBook?.find((book) => book?.id === id)
         : book?.find((book) => book?.id === id);
       if (selectedBook) {
+        console.log(selectedBook)
         setBookID(selectedBook?.id);
         setBookName(selectedBook?.bookName);
         setAuthID(selectedBook?.authorId);
@@ -48,6 +49,8 @@ export const ManageBookComponent = (props) => {
   const onSuccessFn = (data, mes) => {
     refetch();
     success(mes);
+    if(searchValue)
+      getBookFilters(searchValue)
   };
   const onErrorfn = (data, mes) => {
     error(mes);
@@ -254,6 +257,8 @@ export const ManageBookComponent = (props) => {
         refetch={refetch}
         basicModal={basicModal}
         toggleOpen={toggleOpen}
+        searchValue={searchValue}
+        getBookFilters={getBookFilters}
       />
     </>
   );

@@ -6,6 +6,7 @@ import { ManageAuthorComponent } from "../MangageAuthorCompoent/ManageAuthorComp
 import { ManageBookComponent } from "../ManageBookComponent/ManageBookComponent";
 import ManageStudentComponent from "../ManageStudentComponent/ManageStudentComponent";
 import ManageOrderComponent from "../MangeOrderComponent/MangeOrderComponent";
+import ManageMemberComponent from "../ManageMemberComponent/ManageMemberComponent";
 const TableComponent = (props) => {
   const {
     category,
@@ -21,7 +22,15 @@ const TableComponent = (props) => {
     searchValue,
     filterAuthor,
     filterStudent,
-    filterCategory,filterOrder
+    filterCategory,
+    filterOrder,
+    returnStatus,
+    member,
+    filterMember,
+    getBookFilters,
+    getAuthorFilters,
+    getCategoriesFilter,
+    getStudentFilters
   } = props;
 
   return (
@@ -78,6 +87,13 @@ const TableComponent = (props) => {
                 <th scope="col">Ngày trả</th>
                 <th scope="col">Hoạt động</th>
               </tr>
+            ) : member ? (
+              <tr className="table-secondary">
+                <th scope="col">Họ tên</th>
+                <th scope="col">Email</th>
+                <th scope="col">Số điện thoại</th>
+                <th scope="col">Hoạt động</th>
+              </tr>
             ) : null}
           </MDBTableHead>
           {/* Body danh muc */}
@@ -87,6 +103,7 @@ const TableComponent = (props) => {
               category={category}
               filterCategory={filterCategory}
               searchValue={searchValue}
+              getCategoriesFilter={getCategoriesFilter}
             />
           ) : author ? (
             // Body tác giả
@@ -95,6 +112,7 @@ const TableComponent = (props) => {
               searchValue={searchValue}
               filterAuthor={filterAuthor}
               author={author}
+              getAuthorFilters={getAuthorFilters}
             />
           ) : book ? (
             // body sách
@@ -106,6 +124,7 @@ const TableComponent = (props) => {
               // allBook={allBook}
               filterBook={filterBook}
               searchValue={searchValue}
+              getBookFilters={getBookFilters}
             />
           ) : // body học sinh
           student ? (
@@ -114,6 +133,7 @@ const TableComponent = (props) => {
               filterStudent={filterStudent}
               searchValue={searchValue}
               student={student}
+              getStudentFilters={getStudentFilters}
             />
           ) : // body đơn hàng
           order ? (
@@ -123,6 +143,14 @@ const TableComponent = (props) => {
               filterOrder={filterOrder}
               searchValue={searchValue}
               order={order}
+              returnStatus={returnStatus}
+            />
+          ) : member ? (
+            <ManageMemberComponent
+              refetch={refetch}
+              filterMember={filterMember}
+              searchValue={searchValue}
+              member={member}
             />
           ) : null}
         </MDBTable>

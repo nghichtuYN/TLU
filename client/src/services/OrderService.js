@@ -1,31 +1,37 @@
 import axios from "axios";
-export const getAllOrders= async (limit=0, page=0) => {
+export const getAllOrders = async (limit = 0, page = 0) => {
   const res = await axios.get(
     `http://localhost:3001/api/order/getAllOrder?page=${page}&limit=${limit}`
   );
   return res;
 };
-export const getFilterOrder= async (limit=0, page=0,searchValue) => {
+export const getFilterOrder = async (
+  limit = 0,
+  page = 0,
+  searchValue,
+  status = ""
+) => {
+  searchValue = searchValue === "" ? "all" : searchValue;
   const res = await axios.get(
-    `http://localhost:3001/api/order/getFilterOrder/${searchValue}?page=${page}&limit=${limit}`
+    `http://localhost:3001/api/order/getFilterOrder/${searchValue}?page=${page}&limit=${limit}&status=${status}`
   );
   return res;
 };
-export const addOrder= async (data) => {
+export const addOrder = async (data) => {
   const res = await axios.post(
     `http://localhost:3001/api/order/create-order`,
     data
   );
   return res.data;
 };
-export const updateOrder= async (id, data) => {
+export const updateOrder = async (id, data) => {
   const res = await axios.put(
     `http://localhost:3001/api/order/update-order/${id}`,
     data
   );
   return res.data;
 };
-export const deleteOrder= async (id) => {
+export const deleteOrder = async (id) => {
   const res = await axios.delete(
     `http://localhost:3001/api/order/delete-order/${id}`
   );

@@ -110,7 +110,17 @@ const BookDetailPage = () => {
                     >
                       Sách:
                     </p>
-                    <h1>{bookDetail.bookName}</h1>
+                    <h1
+                      style={{
+                        maxWidth: "700px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                      title={bookDetail?.bookName}
+                    >
+                      {bookDetail.bookName}
+                    </h1>
                   </div>
                   <div className="ps-5 pe-5">
                     <div
@@ -186,7 +196,7 @@ const BookDetailPage = () => {
                               color: "red",
                             }}
                           >
-                            Hết sách{" "}
+                            Tạm hết sách{" "}
                           </p>
                         ) : (
                           <p
@@ -232,7 +242,7 @@ const BookDetailPage = () => {
                             color: "orange",
                           }}
                         >
-                          {bookDetail?.bookPrice}
+                          {bookDetail?.bookPrice} VND
                         </h1>
                       </div>
                     </div>

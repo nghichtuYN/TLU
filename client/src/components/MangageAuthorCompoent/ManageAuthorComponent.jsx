@@ -12,7 +12,7 @@ import NotFoundMessageComponent from "../NotFoundMessageComponent/NotFoundMessag
 export const ManageAuthorComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
-  const { author, refetch, searchValue, filterAuthor } = props;
+  const { author, refetch, searchValue, filterAuthor ,getAuthorFilters} = props;
   const [authorId, setAuthID] = useState(0);
   const [authorName, setAuthorName] = useState("");
   const handleOpen = (id) => {
@@ -155,6 +155,8 @@ export const ManageAuthorComponent = (props) => {
         refetch={refetch}
         basicModal={basicModal}
         toggleOpen={toggleOpen}
+        getAuthorFilters={getAuthorFilters}
+        searchValue={searchValue}
       />
     </>
   );

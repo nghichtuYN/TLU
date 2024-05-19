@@ -10,7 +10,7 @@ import NotFoundMessageComponent from "../NotFoundMessageComponent/NotFoundMessag
 const ManageOrderComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
-  const { order, refetch, refetchBook, filterOrder, searchValue } = props;
+  const { order, refetch, refetchBook, filterOrder, searchValue,returnStatus } = props;
   const [detailStudent, setDetailStudent] = useState([]);
   const [orderId, setOrderId] = useState("");
   const [orderItems, setOrderItems] = useState([]);
@@ -66,7 +66,7 @@ const ManageOrderComponent = (props) => {
   return (
     <>
       <MDBTableBody>
-        {searchValue !== "" ? (
+        {searchValue !== "" || returnStatus!==""? (
           filterOrder && filterOrder?.length > 0 ? (
             filterOrder?.map((order) => {
               const formattedDateCreated = order?.borrowDate
@@ -103,7 +103,7 @@ const ManageOrderComponent = (props) => {
                     </div>
                   </td>
                   <td>
-                    {bookArray.map((items, index) => {
+                    {bookArray?.map((items, index) => {
                       return (
                         <div key={index} className="d-flex align-items-center">
                           <div className="ms-3">
@@ -116,7 +116,7 @@ const ManageOrderComponent = (props) => {
                     })}
                   </td>
                   <td>
-                    {isbnArray.map((items, index) => {
+                    {isbnArray?.map((items, index) => {
                       return (
                         <div key={index} className="d-flex align-items-center">
                           <div className="ms-3">

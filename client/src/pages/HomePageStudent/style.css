@@ -13,6 +13,7 @@
     /* Di chuyển phần tử về giữa */
     font-weight: bold;
     /* In đậm chữ đã được mượn */
-    color: black;
+    color: red;
     font-size: 14px;
+    font-weight: bold;
 }

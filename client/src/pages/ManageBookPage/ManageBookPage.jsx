@@ -51,17 +51,11 @@ const ManageBookPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [filterBook, setFilterBook] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+  
   const onChange = (e) => {
     setSearchValue(e.target.value);
   };
-  const getBookFilters = (searchValue) => {
-    setIsLoading(true)
-    setTimeout(async () => {
-      const res = await getBookFilter(5, page - 1, searchValue);
-      setFilterBook(res.data);
-      setIsLoading(false)
-    }, 500);
-  };
+
   const getAllBook = async () => {
     setIsLoading(true);
     return new Promise((resolve, reject) => {
@@ -73,26 +67,45 @@ const ManageBookPage = () => {
         } catch (error) {
           reject(error);
         }
-      }, 500);
+      }, 1000);
     });
   };
   const { data: book, refetch } = useQueryHook(["book", page], getAllBook);
+  const getBookFilters = (searchValue) => {
+    setIsLoading(true);
+    // refetch()
+    try {
+      setTimeout(async () => {
+        const res = await getBookFilter(5, page - 1, searchValue);
+        setFilterBook(res.data);
+        if (filterBook.length === 0 || filterBook?.totalPage <= 1) {
+          navigate(`/manage-book?pages=${1}&limits=${limit}`);
+        }
+        setIsLoading(false);
+      }, 1000);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
     if (book?.data?.length === 0) {
       navigate(`/manage-book?pages=${Math.max(page - 1, 1)}&limits=${limit}`);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [book, page]);
+  
+  useEffect(() => {
     if (searchValue !== "") {
       getBookFilters(searchValue);
-      if (filterBook?.totalPage <= 1) {
-      navigate(`/manage-book?pages=${1}&limits=${limit}`);
-      }
     }
     if (searchValue === "") {
       setFilterBook([]);
+      refetch();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [book, page, searchValue]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue, page]);
+
   const getAllAuthors = async () => {
     const res = await getAllAuthor();
     return res.data;
@@ -120,6 +133,7 @@ const ManageBookPage = () => {
     setIsLoading(false);
     error(mes);
   };
+
   const muationAdd = useMutationHook(
     (data) => addBook(data),
     (data) => onSuccessFn(data, "Tạo sách thành công"),
@@ -200,8 +214,10 @@ const ManageBookPage = () => {
               />
             </div>
             {filterBook && filterBook.data?.length > 0 ? (
+              // setTimeout(() => {
               <p style={{ fontSize: "20px" }}>{filterBook?.total} kết quả</p>
-            ) : null}
+            ) : // }, 1000)
+            null}
           </div>
           {isLoading ? (
             <SpinnerComponent />
@@ -215,6 +231,7 @@ const ManageBookPage = () => {
                 refetch={refetch}
                 bookPage={page}
                 searchValue={searchValue}
+                getBookFilters={getBookFilters}
               />
               <div className="d-flex justify-content-end">
                 <PaginationComponent
@@ -315,8 +332,10 @@ const ManageBookPage = () => {
                       value={authorName}
                       style={{
                         width: "100%",
+                        maxHeight: "130px",
                         height: "30px",
                         marginLeft: "10px",
+                        boxSizing: "border-box",
                       }}
                       onChange={(e) => {
                         const selectedAuthor = authorList?.data.find(
@@ -331,10 +350,32 @@ const ManageBookPage = () => {
                         }
                       }}
                     >
-                      <option value="">--Chọn tác giả--</option>
+                      <option
+                        style={{
+                          width: "100%",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          boxSizing: "border-box",
+                          textOverflow: "ellipsis",
+                        }}
+                        value=""
+                      >
+                        --Chọn tác giả--
+                      </option>
                       {authorList?.data.map((author) => (
                         <option key={author?.id} value={author?.authorName}>
-                          {author?.authorName}
+                          <div
+                            style={{
+                              // width: "100%",
+                              maxWidth: "100px",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              boxSizing: "border-box",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {author?.authorName}
+                          </div>
                         </option>
                       ))}
                     </select>

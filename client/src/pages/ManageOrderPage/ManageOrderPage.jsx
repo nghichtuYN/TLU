@@ -29,7 +29,7 @@ import { getAllStudents } from "../../services/StudentService";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
 import { MdOutlineEditNote } from "react-icons/md";
 import { SearchComponent } from "../../components/SearchComponent/SearchComponent";
-
+import "./style.css"
 const ManageOrderPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ const ManageOrderPage = () => {
   const [studentExist, setStudentExist] = useState(true);
   const [searchValue, setSearchValue] = useState("");
   const [filterOrder, setFilterOrder] = useState([]);
-  const [returnStatus,setReturnStatus]=useState(false)
+  const [returnStatus, setReturnStatus] = useState("");
   const getAllOrder = async () => {
     setIsLoading(true);
     return new Promise((resolve, reject) => {
@@ -64,17 +64,25 @@ const ManageOrderPage = () => {
       }, 500);
     });
   };
-  const onChangeReturnStatus=(e)=>{
-    setReturnStatus(e.target.value)
-  }
-  console.log('returnStatus',returnStatus)
-  const getFilterOrders = (searchValue) => {
+  const onChangeReturnStatus = (e) => {
+    setReturnStatus(e.target.value);
+  };
+  const getFilterOrders =  (searchValue, status) => {
     setIsLoading(true);
-    setTimeout(async () => {
-      const res = await getFilterOrder(5, page - 1, searchValue);
-      setFilterOrder(res.data);
-      setIsLoading(false);
-    }, 500);
+    try {
+      setTimeout(async () => {
+        const res = await getFilterOrder(5, page - 1, searchValue, status);
+        setFilterOrder(res.data);
+        console.log(filterOrder)
+        if (filterOrder.length===0 || filterOrder?.totalPage <=1) {
+          console.log("ruunginng")
+          navigate(`/manage-order?pages=${1}&limits=${limit}`);
+        }
+        setIsLoading(false);
+      }, 500);
+    } catch (error) {
+      console.error(error);
+    }
   };
   const { data: order, refetch: refetchOrder } = useQueryHook(
     ["order", page],
@@ -96,22 +104,26 @@ const ManageOrderPage = () => {
   const onChange = (e) => {
     setSearchValue(e.target.value);
   };
-  const { data: student } = useQueryHook(["student"], getAllStudent);
-  useEffect(() => {
+  const fetchOrders = async () => {
     if (order?.data.length === 0) {
       navigate(`/manage-order?pages=${Math.max(page - 1, 1)}&limits=${limit}`);
     }
-    if (searchValue !== "") {
-      getFilterOrders(searchValue);
-      if (filterOrder?.totalPage <= 1) {
-        navigate(`/manage-order?pages=${1}&limits=${limit}`);
-      }
+    if (searchValue !== "" && returnStatus !== "") {
+      getFilterOrders(searchValue, returnStatus);
     }
-    if (searchValue === "") {
+    if (searchValue === "" && returnStatus === "") {
       setFilterOrder([]);
+      refetchOrder();
+    } else {
+      getFilterOrders(searchValue, returnStatus);
     }
+  };
+  const { data: student } = useQueryHook(["student"], getAllStudent);
+  useEffect(() => {
+    fetchOrders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [order, page, student, book, searchValue]);
+  }, [order, page, student, book, searchValue, returnStatus]);
+
   const handleInputChange = async (e) => {
     const bookName = e.target.value;
     const selectedBook = book?.data.find((book) => book?.bookName === bookName);
@@ -163,11 +175,8 @@ const ManageOrderPage = () => {
     event.preventDefault();
     console.log(stu, orderItems, borrowDate);
     if (stu?.length === 0 || orderItems?.length === 0 || !borrowDate) {
-      console.log("running");
       return alert(`Vui lòng nhập đủ thông tin`);
     } else {
-      console.log("running");
-
       const student = stu.map((stu) => stu.id);
       muationAdd.mutate({
         orderItems: orderItems,
@@ -208,29 +217,32 @@ const ManageOrderPage = () => {
           </Button>
         </div>
         <div className="d-flex flex-column">
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ flex: 1 }}>
+          <div class="d-flex bd-highlight mb-3">
+            <div class="me-auto p-2 bd-highlight" style={{ flex: 1 }}>
               <SearchComponent
                 value={searchValue}
                 onChange={onChange}
-                placeholder={"Tìm kiếm tác giả"}
+                placeholder={"Tìm kiếm đơn mượn theo mã độc giả"}
               />
             </div>
-            <div>
+            <div class="p-2 bd-highlight">
               <select
                 onChange={onChangeReturnStatus}
                 id="studentCode"
                 className="form-select"
                 required
+                style={{ fontSize: "15px" }}
               >
-                <option value="">--Tất cả--</option>
-               <option value={1}>--Đã trả--</option>
-               <option value={0}>--Chưa trả--</option>
+                <option value={""}>--Tất cả--</option>
+                <option value={"true"}>--Đã trả--</option>
+                <option value={"false"}>--Chưa trả--</option>
               </select>
             </div>
-            {filterOrder && filterOrder.data?.length > 0 ? (
-              <p style={{ fontSize: "20px" }}>{filterOrder?.total} kết quả</p>
-            ) : null}
+            <div class="p-2 bd-highlight">
+              {filterOrder && filterOrder.data?.length > 0 ? (
+                <p style={{ fontSize: "20px" }}>{filterOrder?.total} kết quả</p>
+              ) : null}
+            </div>
           </div>
           {isLoading ? (
             <SpinnerComponent />
@@ -242,6 +254,7 @@ const ManageOrderPage = () => {
                 refetchBook={refetchBook}
                 filterOrder={filterOrder?.data}
                 searchValue={searchValue}
+                returnStatus={returnStatus}
               />
               <div className="d-flex justify-content-end">
                 <PaginationComponent
@@ -332,7 +345,7 @@ const ManageOrderPage = () => {
                       )}
                     </div>
                   </div>
-                  <div>
+                  <div style={{with :'100px'}}>
                     <label>
                       <span>Sách mượn</span>
                       <span style={{ color: "red" }}>*</span>
@@ -344,12 +357,12 @@ const ManageOrderPage = () => {
                     >
                       <option value="">--Chọn sách--</option>
                       {book?.data.map((book) => {
-                        console.log(book?.quantity === book.isBorrowed);
                         return (
                           <option
                             key={book?.id}
                             value={book?.bookName}
                             disabled={book?.quantity === book.isBorrowed}
+                            
                           >
                             {book?.bookName}{" "}
                             {book?.quantity === book.isBorrowed ? (
@@ -371,16 +384,21 @@ const ManageOrderPage = () => {
                             alt=""
                             style={{ width: "60px", height: "60px" }}
                           />
-                          <div className="ms-3">
-                            <p className="fw-bold mb-1" title={items?.bookName}>
+                          <div className="ms-3 d-flex justify-content-center align-items-center">
+                            <p className="fw-bold mb-1" style={{
+                              maxWidth:'200px',
+                              whiteSpace:'nowrap',
+                              overflow:'hidden',
+                              textOverflow:'ellipsis'
+                            }} title={items?.bookName}>
                               {items?.bookName}
+                            </p>
                               <button
                                 style={{ marginLeft: "2px" }}
                                 onClick={() => removeItems(items?.id)}
                               >
                                 X
                               </button>
-                            </p>
                           </div>
                         </div>
                       ))}

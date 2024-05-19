@@ -12,7 +12,7 @@ import NotFoundMessageComponent from "../NotFoundMessageComponent/NotFoundMessag
 const ManageStudentComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
-  const { student, refetch, filterStudent, searchValue } = props;
+  const { student, refetch, filterStudent, searchValue,getStudentFilters } = props;
   const [studentId, setStudentId] = useState(0);
   const [studentCode, setStudentCode] = useState("");
   const [fullName, setFullName] = useState("");
@@ -265,6 +265,8 @@ const ManageStudentComponent = (props) => {
         refetch={refetch}
         basicModal={basicModal}
         toggleOpen={toggleOpen}
+        searchValue={searchValue}
+        getStudentFilters={getStudentFilters}
       />
     </>
   );

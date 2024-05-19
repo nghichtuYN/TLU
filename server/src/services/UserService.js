@@ -1,28 +1,23 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
-const { genneralAccessToken, genneralRefreshToken } = require("./JwtService");
-// const createStudent = (newStudent) => {
-//   return new Promise(async (resolve, reject) => {
-//     const { studentCode, fullName, email, mobileNumber } = newStudent;
-//     try {
-//       const createdStudent = await Student.create({
-//         studentCode,
-//         fullName,
-//         email,
-//         mobileNumber,
-//       });
-//       if (createdStudent) {
-//         resolve({
-//           status: "OK",
-//           message: "SUCCESS",
-//           data: createdStudent,
-//         });
-//       }
-//     } catch (error) {
-//       reject(error);
-//     }
-//   });
-// };
+const { genneralAccessToken } = require("./JwtService");
+const getMemberFilter = (limit, page,searchValue) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const {data,total} = await User.getMemberFilter(limit,page,searchValue) 
+      resolve({
+        status: "OK",
+        message: "GET SUCCESS",
+        data: data,
+        total: total.length,
+        pageCurrent: Number(page + 1),
+        totalPage: Math.ceil(total.length / limit),
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 const createUser = (newUser) => {
   return new Promise(async (resolve, reject) => {
     const { fullName, email, userName, password, isAdmin } = newUser;
@@ -58,9 +53,10 @@ const createUser = (newUser) => {
 const loginUser = (loginUser) => {
   return new Promise(async (resolve, reject) => {
     const { userName, password } = loginUser;
+    console.log(userName,password)
     try {
       const checkUser = await User.findOne(userName);
-      if (checkUser === null) {
+      if (checkUser === undefined) {
         resolve({
           status: "ERR",
           message: "Không tồn tại tài khoản này",
@@ -87,22 +83,64 @@ const loginUser = (loginUser) => {
     }
   });
 };
+const checkPassword = (checkData) => {
+  return new Promise(async (resolve, reject) => {
+    const { id, password } = checkData;
+    try {
+      const checkUser = await User.getUserByID(id);
+      if (checkUser === undefined) {
+        resolve({
+          status: "ERR",
+          message: "Không tồn tại tài khoản này",
+        });
+      }
+      const comaprePassword = bcrypt.compareSync(password, checkUser.password);
+      if (!comaprePassword) {
+        resolve({
+          status: "ERR",
+          message: "Password is not correct",
+        });
+      }
+      resolve({
+        status: "OK",
+        message: "SUCCESS",
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 const updateUser = (id, dataUpdate) => {
   return new Promise(async (resolve, reject) => {
     try {
       const checkUser = await User.getUserByID(id);
-      if (checkUser === null) {
+      const { password,...rest } = dataUpdate;
+      if (checkUser === undefined) {
         resolve({
           status: "ERR",
           message: "The user is not defined",
         });
       }
-      const updatedUser = await User.updateUser(id, dataUpdate);
-      resolve({
-        status: "OK",
-        message: "UPDATE SUCCESS",
-        data: updatedUser,
-      });
+      const comaprePassword = bcrypt.compareSync(password, checkUser.password);
+      if (comaprePassword) {
+        console.log('istrue',comaprePassword)
+        const updatedUser = await User.updateUser(id, {password :checkUser.password, ...rest});
+        resolve({
+          status: "OK",
+          message: "UPDATE SUCCESS",
+          data: updatedUser,
+        });
+      }else{
+        console.log('isFalse',comaprePassword)
+
+        const hash = bcrypt.hashSync(password, 10);
+        const updatedUser = await User.updateUser(id, {password :hash, ...rest});
+        resolve({
+          status: "OK",
+          message: "UPDATE SUCCESS",
+          data: updatedUser,
+        });
+      }
     } catch (error) {
       reject(error);
     }
@@ -112,7 +150,7 @@ const deleteUser = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
       const checkUser = await User.getUserByID(id);
-      if (checkUser === null) {
+      if (checkUser === undefined) {
         resolve({
           status: "ERR",
           message: "The member is not defined",
@@ -128,14 +166,18 @@ const deleteUser = (id) => {
     }
   });
 };
-const getAllUser = () => {
+const getAllUser = (limit,page) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const allMemeber = await User.getAllUser();
+      const {data,total} = await User.getAllUser(limit,page);
+      console.log(total)
       resolve({
         status: "OK",
         message: "GET SUCCESS",
-        data: { ...allMemeber },
+        data: data,
+        total: total?.length,
+        pageCurrent: Number(page + 1),
+        totalPage: Math.ceil(total?.length / limit),
       });
     } catch (error) {
       reject(error);
@@ -157,15 +199,12 @@ const getDetailsUser = (id) => {
   });
 };
 module.exports = {
-  // createStudent,
-  // createMember,
-  // loginAdmin,
-  // updateMember,
-  // deleteMember,
   loginUser,
   deleteUser,
   updateUser,
   getAllUser,
   createUser,
   getDetailsUser,
+  checkPassword,
+  getMemberFilter
 };

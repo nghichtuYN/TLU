@@ -12,9 +12,8 @@ import NotFoundMessageComponent from "../NotFoundMessageComponent/NotFoundMessag
 export const ManageCategoryComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
-  const { category, filterCategory, refetch, searchValue } = props;
+  const { category, filterCategory, refetch, searchValue,getCategoriesFilter } = props;
   const [categoryName, setCategoryName] = useState("");
-  // eslint-disable-next-line no-unused-vars
   const [status, setStatus] = useState("");
   const [category_id, setCatID] = useState(0);
   const handleOpen = (id) => {
@@ -28,7 +27,6 @@ export const ManageCategoryComponent = (props) => {
       setCategoryName(selectedCategory?.categoryName);
     }
   };
-  console.log("status", status);
   const onSuccessFn = (data, mes) => {
     refetch();
     success(mes);
@@ -185,6 +183,8 @@ export const ManageCategoryComponent = (props) => {
         basicModal={basicModal}
         category={category}
         toggleOpen={toggleOpen}
+        searchValue={searchValue}
+        getCategoriesFilter={getCategoriesFilter}
       />
     </>
   );

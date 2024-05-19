@@ -106,7 +106,7 @@ const createBook = (newBook) => {
         .input("authorId", sql.NVarChar, authorId)
         .input("isBorrowed", sql.Int, 0)
         .input("bookImage", sql.NVarChar, bookImage)
-        .input("bookPrice", sql.SmallInt, bookPrice)
+        .input("bookPrice", sql.Int, bookPrice)
         .query(sqlString);
       resolve(data);
     } catch (error) {
@@ -161,7 +161,7 @@ const updateBook = (id, updatedata) => {
         .input("authorId", sql.Int, authorId)
         .input("quantity", sql.Int, quantity)
         .input("bookImage", sql.NVarChar, bookImage)
-        .input("bookPrice", sql.SmallInt, bookPrice)
+        .input("bookPrice", sql.Int, bookPrice)
         .input("id", sql.Int, id)
         .input("isBorrowed", sql.Int, isBorrowed)
         .input("updated_at", sql.DateTime, dateString)

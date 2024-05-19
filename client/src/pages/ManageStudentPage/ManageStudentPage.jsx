@@ -45,9 +45,20 @@ const ManageStudentPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [filterStudent, setFilterStudent] = useState([]);
   const [searchValue, setSearchValue] = useState("");
-  const getStudentFilters = async (searchValue) => {
-    const res = await getFilterStudentByCode(5, page - 1, searchValue);
-    setFilterStudent(res.data);
+  const getStudentFilters = (searchValue) => {
+    setIsLoading(true);
+    try {
+      setTimeout(async () => {
+        const res = await getFilterStudentByCode(5, page - 1, searchValue);
+        setFilterStudent(res.data);
+        if (filterStudent?.length === 0 || filterStudent?.totalPage <= 1) {
+          navigate(`/manage-student?pages=${1}&limits=${limit}`);
+        }
+        setIsLoading(false);
+      }, 500);
+    } catch (error) {
+      console.error(error);
+    }
   };
   const getAllStudent = async () => {
     setIsLoading(true);
@@ -78,15 +89,13 @@ const ManageStudentPage = () => {
     }
     if (searchValue !== "") {
       getStudentFilters(searchValue);
-      if (filterStudent?.totalPage <= 1) {
-        navigate(`/manage-student?pages=${1}&limits=${limit}`);
-      }
     }
     if (searchValue === "") {
       setFilterStudent([]);
+      refetch();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [student, page,searchValue,isLoading]);
+  }, [student, page, searchValue]);
   const onSuccessFn = (data, mes) => {
     refetch();
     success(mes);
@@ -146,17 +155,26 @@ const ManageStudentPage = () => {
             <SpinnerComponent />
           ) : (
             <div>
-              <TableComponent student={student?.data}
-              filterStudent={filterStudent?.data}
-              refetch={refetch} 
-              searchValue={searchValue}/>
+              <TableComponent
+                student={student?.data}
+                filterStudent={filterStudent?.data}
+                refetch={refetch}
+                searchValue={searchValue}
+                getStudentFilters={getStudentFilters}
+              />
               <div className="d-flex justify-content-end">
                 <PaginationComponent
                   isStudent={true}
                   totalPage={
-                    filterStudent?.length===0 ?
-                    student?.totalPage: filterStudent?.totalPage}
-                  pageCurrent={filterStudent?.length===0 ? student?.pageCurrent:filterStudent?.pageCurrent}
+                    filterStudent?.length === 0
+                      ? student?.totalPage
+                      : filterStudent?.totalPage
+                  }
+                  pageCurrent={
+                    filterStudent?.length === 0
+                      ? student?.pageCurrent
+                      : filterStudent?.pageCurrent
+                  }
                   limit={limit}
                 />
               </div>

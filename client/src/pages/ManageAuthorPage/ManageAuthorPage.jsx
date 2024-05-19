@@ -40,7 +40,6 @@ const ManageAuthorPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [filterAuthor, setFilterAuthor] = useState([]);
-
   const getAllAuthors = () => {
     setIsLoading(true);
     return new Promise((resolve, reject) => {
@@ -60,28 +59,33 @@ const ManageAuthorPage = () => {
     getAllAuthors
   );
   const getAuthorFilters = (searchValue) => {
-    setIsLoading(true)
+    setIsLoading(true);
     setTimeout(async () => {
       const res = await getFilterAuthor(5, page - 1, searchValue);
       setFilterAuthor(res.data);
-      setIsLoading(false)
+      if (filterAuthor?.length === 0 || filterAuthor?.totalPage <= 1) {
+        navigate(`/manage-author?pages=${1}&limits=${limit}`);
+      }
+      setIsLoading(false);
     }, 500);
   };
   useEffect(() => {
     if (author?.data.length === 0) {
       navigate(`/manage-author?pages=${Math.max(page - 1, 1)}&limits=${limit}`);
     }
-    if (searchValue !== "") {
-      getAuthorFilters(searchValue);
-      if (filterAuthor?.totalPage <= 1) {
-      navigate(`/manage-author?pages=${1}&limits=${limit}`);
-      }
-    }
-    if (searchValue === "") {
-      setFilterAuthor([]);
-    }
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [author, page, searchValue]);
+  }, [author, page,]);
+ useEffect(()=>{
+  if (searchValue) {
+    getAuthorFilters(searchValue);
+  }
+  if (searchValue === "") {
+    setFilterAuthor([]);
+    refetch();
+  }
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[searchValue])
   const onSuccessFn = (data, mes) => {
     refetch();
     success(mes);
@@ -153,6 +157,7 @@ const ManageAuthorPage = () => {
                 filterAuthor={filterAuthor?.data}
                 refetch={refetch}
                 searchValue={searchValue}
+                getAuthorFilters={getAuthorFilters}
               />
               <div className="d-flex justify-content-end">
                 <PaginationComponent

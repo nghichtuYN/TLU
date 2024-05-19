@@ -88,7 +88,7 @@ const NavbarCompoent = () => {
       {member?.isAdmin ? (
         <div>
           <NavLink
-            to="/manage-member"
+            to={`/manage-member?pages=${page}&limits=${limit}`}
             style={{ textDecoration: "none", color: "black", gap: "30px" }}
           >
             <div className="nav d-flex justify-content-start align-items-center">

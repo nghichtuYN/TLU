@@ -6,6 +6,8 @@ const initialState = {
   userName: "",
   id: "",
   isAdmin: false,
+  mobileNumber:"",
+  password:''
 };
 
 export const memberSlice = createSlice({
@@ -17,16 +19,21 @@ export const memberSlice = createSlice({
         fullName = "",
         email = "",
         access_token = "",
-        userName = "",
+        username = "",
         id = "",
         isAdmin,
+        mobileNumber="",
+        password=""
       } = action.payload;
+      console.log(action.payload)
       state.fullName = fullName;
       state.email = email;
       state.access_token = access_token;
       state.id = id;
-      state.userName = userName;
+      state.userName = username;
       state.isAdmin = isAdmin;
+      state.mobileNumber=mobileNumber
+      state.password=password
     },
     resetMember: (state) => {
       state.fullName = "";
@@ -35,6 +42,8 @@ export const memberSlice = createSlice({
       state.id = "";
       state.userName = "";
       state.isAdmin = false;
+      state.mobileNumber="";
+      state.password=""
     },
   },
 });

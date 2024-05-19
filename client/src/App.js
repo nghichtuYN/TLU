@@ -24,6 +24,7 @@ const App = () => {
 
   const handleGetDetailUser = async (id, token) => {
     const res = await getDetailsUser(id, token);
+    console.log('res',res.data)
     dispatch(updateMember({ ...res?.data, access_token: token }));
   };
 

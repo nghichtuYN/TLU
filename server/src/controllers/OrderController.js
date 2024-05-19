@@ -34,12 +34,15 @@ const getAllOrder = async (req, res) => {
 };
 const getFilterOrder = async (req, res) => {
   try {
-    const { limit, page } = req.query;
+    const { limit, page,status } = req.query;
     const key = req.params.key;
+    console.log('status',req.query)
+    console.log('key',key)
     const response = await OrderServices.getFilterOrder(
       Number(limit),
       Number(page),
-      key
+      key,
+      status
     );
     return res.status(200).json(response);
   } catch (error) {
