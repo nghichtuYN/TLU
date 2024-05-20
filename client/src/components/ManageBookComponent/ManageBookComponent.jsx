@@ -130,8 +130,7 @@ export const ManageBookComponent = (props) => {
                       onClick={() => handleOpen(book?.id)}
                     >
                       {" "}
-                      {/* <FaRegEdit style={{ fontSize: "20px" }} /> */}
-                      caapj
+                      <FaRegEdit style={{ fontSize: "20px" }} />
                     </Button>
                     <Button
                       style={{ marginLeft: "5px" }}

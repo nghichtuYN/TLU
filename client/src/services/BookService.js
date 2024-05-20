@@ -12,8 +12,10 @@ export const getBookByCategory = async (limit = 0, page = 0,id) => {
   return res;
 };
 export const getBookFilter = async (limit = 0, page = 0,searchValue) => {
+  console.log(searchValue)
+  const URL=`http://localhost:3001/api/book/getBookFilter/${encodeURIComponent(searchValue)}?page=${page}&limit=${limit}`
   const res = await axios.get(
-    `http://localhost:3001/api/book/getBookFilter/${searchValue}?page=${page}&limit=${limit}`
+    URL
   );
   return res;
 };

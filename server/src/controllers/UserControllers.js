@@ -1,11 +1,11 @@
 const UserService = require("../services/UserService");
 const createUser = async (req, res) => {
   try {
-    const { fullName, email, userName, password, confirmPassword } = req.body;
+    const { fullName, email, userName, password, confirmPassword ,isAdmin,mobileNumber} = req.body;
     const regEmail =
       /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
     const isCheckEmail = regEmail.test(email);
-    if (!fullName || !email || !userName || !password || !confirmPassword) {
+    if (!fullName || !email || !userName || !password || !confirmPassword || !isAdmin ||!mobileNumber) {
       return res.status(200).json({
         status: "ERR",
         message: "Vui lòng nhập đầy đủ thông tin",

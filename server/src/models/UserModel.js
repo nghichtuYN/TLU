@@ -51,7 +51,7 @@ const createUser = (newUser) => {
         .input("email", sql.NVarChar, email)
         .input("userName", sql.NVarChar, userName)
         .input("password", sql.NVarChar, password)
-        .input("isAdmin", sql.Bit, isAdmin === undefined ? null : isAdmin)
+        .input("isAdmin", sql.Bit, isAdmin === "false" ? 0 : 1)
         .query(sqlString);
       resolve(data);
     } catch (error) {

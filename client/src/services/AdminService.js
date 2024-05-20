@@ -3,6 +3,15 @@ export const signInMember = async (data) => {
   const res = await axios.post(`http://localhost:3001/api/user/sign-in`, data);
   return res.data;
 };
+export const signUpMember = async (data) => {
+  const res = await axios.post(`http://localhost:3001/api/user/sign-up`, data);
+  return res.data;
+};
+export const deleteMember= async(id)=>{
+  const res = await axios.delete(`http://localhost:3001/api/user/delete-user/${id}`);
+  return res.data;
+
+}
 export const checkPassword = async (data) => {
   const res = await axios.post(`http://localhost:3001/api/user/checkPassword/`, data);
   return res.data;

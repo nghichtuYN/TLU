@@ -14,7 +14,7 @@ import {
 } from "mdb-react-ui-kit";
 import { Button } from "react-bootstrap";
 import "./style.css";
-import React from "react";
+import React, { useState } from "react";
 import { useMutationHook } from "../../Hook/useMutationHook";
 import { error, success } from "../MessageComponent/MessageComponent";
 import { updateCategory } from "../../services/CategoryService";
@@ -22,6 +22,7 @@ import { updateAuthor } from "../../services/AuthorService";
 import { updateBook } from "../../services/BookService";
 import { updateStudent } from "../../services/StudentService";
 import { updateOrder } from "../../services/OrderService";
+import { format } from "date-fns";
 
 const ModalComponent = (props) => {
   const {
@@ -78,7 +79,12 @@ const ModalComponent = (props) => {
     refetchBook,
     setOrderItems,
     order,
+    statusReturn
   } = props;
+  // eslint-disable-next-line no-unused-vars
+  const [currentDate, setCurrentDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const onSuccessFn = (data, mes) => {
     refetch();
     if (book) {
@@ -175,6 +181,13 @@ const ModalComponent = (props) => {
     //   setStudent([]);
     // };
   };
+  console.log(returnDate)
+  const formattedDateCreated = borrowDate
+              ? format(new Date(borrowDate), "dd/MM/yyyy")
+              : "";
+              const formattedDateReturn = returnDate
+              ? format(new Date(returnDate), "dd/MM/yyyy")
+              : "";
   return (
     <>
       <MDBModal
@@ -506,6 +519,7 @@ const ModalComponent = (props) => {
                         <MDBTable align="middle" style={{ fontSize: "16px" }}>
                           <MDBTableBody>
                             {orderItems?.map((items) => {
+                              
                               return (
                                 <tr key={items?.id}>
                                   <td style={{ maxWidth: "30%" }}>
@@ -525,8 +539,9 @@ const ModalComponent = (props) => {
                                     <div style={{ maxWidth: "300px" }}>
                                       <p>Tên sách: {items?.bookName}</p>
                                       <p>ISBNNmber: {items?.ISBNNumber}</p>
-                                      <p>Ngày mượn: {borrowDate}</p>
-                                      <p>Ngày trả: {returnDate}</p>
+                                      <p>Ngày mượn: {formattedDateCreated}</p>
+                                      <p>Ngày trả: {formattedDateReturn}</p>
+                                      <p>Tình trạng: {statusReturn(items?.returnStatus, returnDate,currentDate)}</p>
                                     </div>
                                   </td>
                                 </tr>

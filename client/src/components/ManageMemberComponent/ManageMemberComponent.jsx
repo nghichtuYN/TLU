@@ -1,17 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { MDBTableBody } from "mdb-react-ui-kit";
 import { Button } from "react-bootstrap";
 import { useMutationHook } from "../../Hook/useMutationHook";
 import { error, success } from "../MessageComponent/MessageComponent";
-import { FaRegEdit } from "react-icons/fa";
 import NotFoundMessageComponent from "../NotFoundMessageComponent/NotFoundMessageComponent";
 
 import { MdDeleteForever } from "react-icons/md";
-import ModalComponent from "../ModalComponent/ModalComponent";
+import { deleteMember } from "../../services/AdminService";
 
 const ManageMemberComponent = (props) => {
-  const [basicModal, setBasicModal] = useState(false);
-  const toggleOpen = () => setBasicModal(false);
   const { member, filterMember, refetch, searchValue } = props;
   const onSuccessFn = (data, mes) => {
     refetch();
@@ -20,9 +17,22 @@ const ManageMemberComponent = (props) => {
   const onErrorfn = (data, mes) => {
     error(mes);
   };
-  const handleOpen = (id) => {};
-  const deleteRow = (id) => {};
-
+  
+  const deleteRow = (id) => {
+    if (member) {
+      return deleteMember(id);
+    }
+  };
+  const mutationDelete = useMutationHook(
+    deleteRow,
+    (data) => onSuccessFn(data, "Xóa thành công"),
+    (data) => onErrorfn(data, "Xóa thất bại")
+  );
+  const handleDelete = (id) => {
+    if(member){
+      mutationDelete.mutate(id)
+    }
+  };
   return (
     <>
       <MDBTableBody>
@@ -118,7 +128,7 @@ const ManageMemberComponent = (props) => {
                       style={{ marginLeft: "5px" }}
                       variant="danger"
                       rounded="true"
-                      // onClick={() => handleDelete(member?.id)}
+                      onClick={() => handleDelete(member?.id)}
                     >
                       <MdDeleteForever style={{ fontSize: "20px" }} />
                     </Button>
@@ -129,36 +139,6 @@ const ManageMemberComponent = (props) => {
           })
         )}
       </MDBTableBody>
-      {/* Modal */}
-      {/* <ModalComponent
-      quantity={quantity}
-      setQuantity={setQuantity}
-      isBorrowed={isBorrowed}
-      member={member}
-      authorName={authorName}
-      authorId={authorId}
-      setAuthorName={setAuthorName}
-      setAuthID={setAuthID}
-      category_id={category_id}
-      categoryName={categoryName}
-      setCategoryName={setCategoryName}
-      memberImage={memberImage}
-      setCatID={setCatID}
-      setmemberImage={setmemberImage}
-      ISBNNumber={ISBNNumber}
-      setISBN_Number={setISBN_Number}
-      memberName={memberName}
-      setmemberName={setmemberName}
-      memberID={memberID}
-      setmemberID={setmemberID}
-      memberPrice={memberPrice}
-      setmemberPrice={setmemberPrice}
-      categoryList={categoryList}
-      authorList={authorList}
-      refetch={refetch}
-      basicModal={basicModal}
-      toggleOpen={toggleOpen}
-    /> */}
     </>
   );
 };

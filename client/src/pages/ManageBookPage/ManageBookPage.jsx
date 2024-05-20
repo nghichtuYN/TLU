@@ -70,6 +70,7 @@ const ManageBookPage = () => {
       }, 1000);
     });
   };
+  console.log(searchValue)
   const { data: book, refetch } = useQueryHook(["book", page], getAllBook);
   const getBookFilters = (searchValue) => {
     setIsLoading(true);

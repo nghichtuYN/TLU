@@ -10,7 +10,14 @@ import NotFoundMessageComponent from "../NotFoundMessageComponent/NotFoundMessag
 const ManageOrderComponent = (props) => {
   const [basicModal, setBasicModal] = useState(false);
   const toggleOpen = () => setBasicModal(false);
-  const { order, refetch, refetchBook, filterOrder, searchValue,returnStatus } = props;
+  const {
+    order,
+    refetch,
+    refetchBook,
+    filterOrder,
+    searchValue,
+    returnStatus,
+  } = props;
   const [detailStudent, setDetailStudent] = useState([]);
   const [orderId, setOrderId] = useState("");
   const [orderItems, setOrderItems] = useState([]);
@@ -50,23 +57,42 @@ const ManageOrderComponent = (props) => {
         const student = await getDetailStudent(selectedOrder?.UserId);
         setDetailStudent(student);
         getOrderItems(selectedOrder);
-        const formattedBorrowDate = selectedOrder?.borrowDate
-          ? format(new Date(selectedOrder?.borrowDate), "dd/MM/yyyy")
-          : "";
-        const formattedReturnDate = selectedOrder?.returnDate
-          ? format(new Date(selectedOrder?.returnDate), "dd/MM/yyyy")
-          : "Chưa trả";
-        setBorrowDate(formattedBorrowDate);
-        setReturnDate(formattedReturnDate);
+        // const formattedBorrowDate = selectedOrder?.borrowDate
+        //   ? format(new Date(selectedOrder?.borrowDate), "dd/MM/yyyy")
+        //   : "";
+        // const formattedReturnDate = selectedOrder?.returnDate
+        //   ? format(new Date(selectedOrder?.returnDate), "dd/MM/yyyy")
+        //   : "Chưa trả";
+        console.log(selectedOrder)
+        setBorrowDate(selectedOrder?.borrowDate);
+        setReturnDate(selectedOrder?.returnDate);
         setStatus(selectedOrder?.returnStatus);
       }
     }
   };
+  const statusReturn = (status,returnDate, currentDate) => {
+    const date1 = new Date(returnDate);
+    const date2 = new Date(currentDate);
+    console.log('returnDate',returnDate )
+    console.log('currentDate',currentDate )
 
+    console.log(date1)
+    const isTrue="Đã trả"
+    const isFalse="Chưa trả"
+    const isWarning="Quá hạn"
+    console.log(date1 < date2)
+    if(status){
+      return isTrue
+    }else if(!status && date1 < date2){
+      return isWarning
+    }else if(!status){
+      return isFalse
+    }
+  };
   return (
     <>
       <MDBTableBody>
-        {searchValue !== "" || returnStatus!==""? (
+        {searchValue !== "" || returnStatus !== "" ? (
           filterOrder && filterOrder?.length > 0 ? (
             filterOrder?.map((order) => {
               const formattedDateCreated = order?.borrowDate
@@ -74,14 +100,14 @@ const ManageOrderComponent = (props) => {
                 : "";
               const formattedDateReturn = order?.returnDate
                 ? format(new Date(order?.returnDate), "dd/MM/yyyy")
-                : "Chưa trả";
+                : "";
               const bookArray = order?.BookNames
                 ? order?.BookNames.split(",")
-                : "không có gì";
+                : [];
               // console.log('bookArray',bookArray)
               const isbnArray = order?.ISBNNumbers
                 ? order?.ISBNNumbers.split(",")
-                : "không có gì";
+                : [];
               return (
                 <tr key={order?.id}>
                   <td>
@@ -143,6 +169,15 @@ const ManageOrderComponent = (props) => {
                     </div>
                   </td>
                   <td>
+                    <div className="d-flex align-items-center">
+                      <div className="ms-3">
+                        <p className="fw-bold mb-1">
+                        {statusReturn(order?.returnStatus ,order?.returnDate,borrowDate)}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
                     <div className="d-flex align-items-center justify-content-center">
                       <Button
                         disabled={order?.returnStatus}
@@ -159,7 +194,7 @@ const ManageOrderComponent = (props) => {
             })
           ) : (
             <tr>
-              <td colSpan={7}>
+              <td colSpan={8}>
                 <div className="d-flex justify-content-center align-items-center">
                   <NotFoundMessageComponent />
                 </div>
@@ -169,6 +204,7 @@ const ManageOrderComponent = (props) => {
         ) : (
           order &&
           order?.map((order) => {
+
             const formattedDateCreated = order?.borrowDate
               ? format(new Date(order?.borrowDate), "dd/MM/yyyy")
               : "";
@@ -203,7 +239,7 @@ const ManageOrderComponent = (props) => {
                   </div>
                 </td>
                 <td>
-                  {bookArray.map((items, index) => {
+                  {bookArray?.map((items, index) => {
                     return (
                       <div key={index} className="d-flex align-items-center">
                         <div className="ms-3">
@@ -216,7 +252,7 @@ const ManageOrderComponent = (props) => {
                   })}
                 </td>
                 <td>
-                  {isbnArray.map((items, index) => {
+                  {isbnArray?.map((items, index) => {
                     return (
                       <div key={index} className="d-flex align-items-center">
                         <div className="ms-3">
@@ -239,6 +275,15 @@ const ManageOrderComponent = (props) => {
                   <div className="d-flex align-items-center">
                     <div className="ms-3">
                       <p className="fw-bold mb-1">{formattedDateReturn}</p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1">
+                       {statusReturn(order?.returnStatus ,order?.returnDate,borrowDate)}
+                      </p>
                     </div>
                   </div>
                 </td>
@@ -275,6 +320,7 @@ const ManageOrderComponent = (props) => {
         refetch={refetch}
         basicModal={basicModal}
         toggleOpen={toggleOpen}
+        statusReturn={statusReturn}
       />
     </>
   );

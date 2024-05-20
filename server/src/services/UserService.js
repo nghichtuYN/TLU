@@ -1,10 +1,14 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
 const { genneralAccessToken } = require("./JwtService");
-const getMemberFilter = (limit, page,searchValue) => {
+const getMemberFilter = (limit, page, searchValue) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const {data,total} = await User.getMemberFilter(limit,page,searchValue) 
+      const { data, total } = await User.getMemberFilter(
+        limit,
+        page,
+        searchValue
+      );
       resolve({
         status: "OK",
         message: "GET SUCCESS",
@@ -20,7 +24,8 @@ const getMemberFilter = (limit, page,searchValue) => {
 };
 const createUser = (newUser) => {
   return new Promise(async (resolve, reject) => {
-    const { fullName, email, userName, password, isAdmin } = newUser;
+    const { fullName, email, userName, password, isAdmin, mobileNumber } =
+      newUser;
     try {
       const checkMember = await User.findOne(userName);
       if (checkMember !== undefined) {
@@ -36,6 +41,7 @@ const createUser = (newUser) => {
           userName,
           password: hash,
           isAdmin,
+          mobileNumber,
         });
         if (createdMember) {
           resolve({
@@ -53,7 +59,7 @@ const createUser = (newUser) => {
 const loginUser = (loginUser) => {
   return new Promise(async (resolve, reject) => {
     const { userName, password } = loginUser;
-    console.log(userName,password)
+    console.log(userName, password);
     try {
       const checkUser = await User.findOne(userName);
       if (checkUser === undefined) {
@@ -114,7 +120,7 @@ const updateUser = (id, dataUpdate) => {
   return new Promise(async (resolve, reject) => {
     try {
       const checkUser = await User.getUserByID(id);
-      const { password,...rest } = dataUpdate;
+      const { password, ...rest } = dataUpdate;
       if (checkUser === undefined) {
         resolve({
           status: "ERR",
@@ -123,18 +129,24 @@ const updateUser = (id, dataUpdate) => {
       }
       const comaprePassword = bcrypt.compareSync(password, checkUser.password);
       if (comaprePassword) {
-        console.log('istrue',comaprePassword)
-        const updatedUser = await User.updateUser(id, {password :checkUser.password, ...rest});
+        console.log("istrue", comaprePassword);
+        const updatedUser = await User.updateUser(id, {
+          password: checkUser.password,
+          ...rest,
+        });
         resolve({
           status: "OK",
           message: "UPDATE SUCCESS",
           data: updatedUser,
         });
-      }else{
-        console.log('isFalse',comaprePassword)
+      } else {
+        console.log("isFalse", comaprePassword);
 
         const hash = bcrypt.hashSync(password, 10);
-        const updatedUser = await User.updateUser(id, {password :hash, ...rest});
+        const updatedUser = await User.updateUser(id, {
+          password: hash,
+          ...rest,
+        });
         resolve({
           status: "OK",
           message: "UPDATE SUCCESS",
@@ -166,11 +178,11 @@ const deleteUser = (id) => {
     }
   });
 };
-const getAllUser = (limit,page) => {
+const getAllUser = (limit, page) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const {data,total} = await User.getAllUser(limit,page);
-      console.log(total)
+      const { data, total } = await User.getAllUser(limit, page);
+      console.log(total);
       resolve({
         status: "OK",
         message: "GET SUCCESS",
@@ -206,5 +218,5 @@ module.exports = {
   createUser,
   getDetailsUser,
   checkPassword,
-  getMemberFilter
+  getMemberFilter,
 };

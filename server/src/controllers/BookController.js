@@ -59,6 +59,7 @@ const getBookFilter = async (req, res) => {
   try {
     const { limit, page } = req.query;
     const key =req.params?.key
+    console.log(key)
     const response = await BookServices.getBookFilter(Number(limit), Number(page),key);
     return res.status(200).json(response);
   } catch (error) {

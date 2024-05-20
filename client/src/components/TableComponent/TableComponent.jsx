@@ -85,7 +85,9 @@ const TableComponent = (props) => {
                 <th scope="col">ISBN</th>
                 <th scope="col">Ngày mượn</th>
                 <th scope="col">Ngày trả</th>
+                <th scope="col">Tình trạng</th>
                 <th scope="col">Hoạt động</th>
+
               </tr>
             ) : member ? (
               <tr className="table-secondary">

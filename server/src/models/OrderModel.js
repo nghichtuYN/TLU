@@ -3,12 +3,13 @@ const moment = require("moment");
 const createOrder = (newOrder) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { userId } = newOrder;
+      const { userId,returnDate } = newOrder;
       const pool = await connect();
-      const sqlString = `INSERT INTO [order] (userId) OUTPUT INSERTED.id VALUES (@userId)`;
+      const sqlString = `INSERT INTO [order] (userId,returnDate) OUTPUT INSERTED.id VALUES (@userId,@returnDate)`;
       const data = await pool
         .request()
         .input("userId", sql.Int, userId)
+        .input("returnDate",sql.DateTime,returnDate)
         .query(sqlString);
       resolve(data.recordset[0].id);
     } catch (error) {
@@ -367,15 +368,10 @@ const updateOrder = (id, updatedata) => {
           .input("id", sql.Int, orderItem.id)
           .query(sqlString);
       }
-      const sqlString = `UPDATE [order] SET returnStatus= @returnStatus,returnDate = @returnDate WHERE id=@id`;
+      const sqlString = `UPDATE [order] SET returnStatus= @returnStatus WHERE id=@id`;
       const data = await pool
         .request()
         .input("id", sql.Int, id)
-        .input(
-          "returnDate",
-          sql.DateTime,
-          returnStatus === "false" ? null : dateString
-        )
         .input("returnStatus", sql.Bit, returnStatus === "false" ? 0 : 1)
         .query(sqlString);
       resolve(data);

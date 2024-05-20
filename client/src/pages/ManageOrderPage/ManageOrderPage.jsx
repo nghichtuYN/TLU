@@ -29,7 +29,6 @@ import { getAllStudents } from "../../services/StudentService";
 import SpinnerComponent from "../../components/SpinnerComponent/SpinnerComponent";
 import { MdOutlineEditNote } from "react-icons/md";
 import { SearchComponent } from "../../components/SearchComponent/SearchComponent";
-import "./style.css"
 const ManageOrderPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -50,6 +49,7 @@ const ManageOrderPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const [filterOrder, setFilterOrder] = useState([]);
   const [returnStatus, setReturnStatus] = useState("");
+
   const getAllOrder = async () => {
     setIsLoading(true);
     return new Promise((resolve, reject) => {
@@ -182,6 +182,7 @@ const ManageOrderPage = () => {
         orderItems: orderItems,
         userId: student[0],
         borrowsDate: borrowDate,
+        returnDate:returnDate
       });
       toggleOpen();
     }
@@ -354,11 +355,34 @@ const ManageOrderPage = () => {
                       required
                       onChange={handleInputChange}
                       className="form-select"
+                      style={{
+                        width: "100%",
+                        maxHeight: "130px",
+                        height: "30px",
+                        marginLeft: "10px",
+                        boxSizing: "border-box",
+                      }}
                     >
-                      <option value="">--Chọn sách--</option>
+                      <option
+                       style={{
+                        width: "100%",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        boxSizing: "border-box",
+                        textOverflow: "ellipsis",
+                      }}
+                      value="">--Chọn sách--</option>
                       {book?.data.map((book) => {
                         return (
                           <option
+                          style={{
+                            // width: "100%",
+                            maxWidth: "100px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            boxSizing: "border-box",
+                            textOverflow: "ellipsis",
+                          }}
                             key={book?.id}
                             value={book?.bookName}
                             disabled={book?.quantity === book.isBorrowed}
@@ -423,7 +447,7 @@ const ManageOrderPage = () => {
                   <MDBInput
                     // required
                     onChange={(e) => setReturnDate(e.target.value)}
-                    id="mobileNumber"
+                    id="returndate"
                     type="date"
                   />
                 </MDBModalBody>
